@@ -1,10 +1,17 @@
 import React from "react";
 import { Map, Droplet, Activity, Box } from "react-feather";
+import AdminGuard from "../components/AdminGuard";
+import AdminVisibilityFilter from "../components/AdminVisibilityFilter";
 
 // Configuration
 export const CRUD_MODELS = [
   { name: "Regions", icon: <Map />, header: "Data Management" },
-  { name: "Wells", icon: <Droplet /> },
+  {
+    name: "Wells",
+    icon: <Droplet />,
+    guard: AdminGuard,
+    visibilityFilter: AdminVisibilityFilter,
+  },
   { name: "Measurements", icon: <Activity /> },
   { name: "WellTypes", icon: <Box />, header: "Lookup Tables" },
 ];

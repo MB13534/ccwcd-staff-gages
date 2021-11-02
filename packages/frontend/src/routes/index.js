@@ -51,6 +51,8 @@ const getSidebarMenu = (list) => {
       component: CrudIndexPage,
       config: require(`../pages/models/${item.name}Config`),
       provider: CrudProvider,
+      guard: item.guard,
+      visibilityFilter: item.visibilityFilter,
       children: item.children,
       header: item.header,
     };
@@ -68,6 +70,8 @@ const getCrudRoutes = (list) => {
       model: inflector.singularize(item.name),
       component: CrudIndexPage,
       provider: CrudProvider,
+      guard: item.guard,
+      visibilityFilter: item.visibilityFilter,
       config,
       crud: [
         {
@@ -76,6 +80,8 @@ const getCrudRoutes = (list) => {
           component: CrudViewPage,
           provider: CrudProvider,
           model: inflector.singularize(item.name),
+          guard: item.guard,
+          visibilityFilter: item.visibilityFilter,
           config,
         },
         {
@@ -84,6 +90,8 @@ const getCrudRoutes = (list) => {
           component: CrudViewPage,
           provider: CrudProvider,
           model: inflector.singularize(item.name),
+          guard: item.guard,
+          visibilityFilter: item.visibilityFilter,
           config,
         },
       ],
