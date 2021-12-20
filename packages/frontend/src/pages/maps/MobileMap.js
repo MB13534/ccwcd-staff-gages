@@ -5,10 +5,13 @@ import { Helmet } from "react-helmet-async";
 
 import { STARTING_LOCATION } from "../../constants";
 import ResetZoomControl from "../../components/map/ResetZoomControl";
-import LayersControl from "../../components/map/LayersControl";
-import { Search as SearchIcon } from "react-feather";
-import { InputBase, Tooltip } from "@material-ui/core";
-import LineChart from "../dashboards/Default/LineChart";
+// import LayersControl from "../../components/map/LayersControl";
+// import { Search as SearchIcon } from "react-feather";
+import {
+  // InputBase,
+  Tooltip,
+} from "@material-ui/core";
+// import LineChart from "../dashboards/Default/LineChart";
 import { findRawRecords } from "../../services/crudService";
 import { useQuery } from "react-query";
 import useService from "../../hooks/useService";
@@ -20,6 +23,12 @@ const MainContainer = styled.div`
   position: fixed;
   height: 100%;
   width: 100vw;
+`;
+
+const MapContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
 `;
 
 const Coordinates = styled.pre`
@@ -46,131 +55,127 @@ const WellName = styled.div`
   text-align: center;
 `;
 
-const Search = styled.div`
-  border-radius: 10px;
-  background-color: rgba(255, 255, 255, 0.5);
-  position: absolute;
-  top: 7px;
-  left: 60px;
-  width: calc(100% - 120px);
-  z-index: 10000;
-  &:hover {
-    background-color: white;
-  }
-`;
+// const Search = styled.div`
+//   border-radius: 10px;
+//   background-color: rgba(255, 255, 255, 0.5);
+//   position: absolute;
+//   top: 7px;
+//   left: 60px;
+//   width: calc(100% - 120px);
+//   z-index: 10000;
+//   &:hover {
+//     background-color: white;
+//   }
+// `;
 
-const SearchIconWrapper = styled.div`
-  width: 50px;
-  height: 100%;
-  position: absolute;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  svg {
-    width: 22px;
-    height: 22px;
-    stroke: ${(props) => props.theme.header.search.color};
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    fill: none;
-  }
-`;
-
-const Input = styled(InputBase)`
-  color: inherit;
-  width: 100%;
-  > input {
-    color: ${(props) => props.theme.header.search.color};
-    padding-top: ${(props) => props.theme.spacing(2.5)}px;
-    padding-right: ${(props) => props.theme.spacing(2.5)}px;
-    padding-bottom: ${(props) => props.theme.spacing(2.5)}px;
-    padding-left: ${(props) => props.theme.spacing(12)}px;
-    width: 100%;
-  }
-`;
-
-const GraphContainer = styled.div`
-  height: 40%;
-  width: 100vw;
-  background-color: red;
-  position: relative;
-`;
-
-const FlowContainer = styled.div`
-  height: 75%;
-  width: 100vw;
-  background-color: green;
-  position: absolute;
-  bottom: 0;
-  left: ${({ flowTransition }) => flowTransition || "100%"};
-  transition: 1s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const WaterLevelContainer = styled.div`
-  height: 75%;
-  width: 100vw;
-  background-color: yellow;
-  position: absolute;
-  bottom: 0;
-  right: ${({ waterLevelTransition }) => waterLevelTransition || "100%"};
-  transition: 1s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const GraphHeader = styled.div`
-  height: 25%;
-  width: 100vw;
-  bottom: 0;
-  right: 0;
-  background-color: blue;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-`;
-
-const DefaultContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  margin: auto;
-  padding: auto;
-`;
-
-const MapContainer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 60%;
-`;
-
-const BottomLeftIconContainer = styled.div`
-  position: absolute;
-  pointer-events: none;
-  z-index: 2;
-  bottom: 40px;
-  left: 10px;
-`;
-
-const BottomRightIconContainer = styled.div`
-  position: absolute;
-  pointer-events: none;
-  z-index: 2;
-  bottom: 40px;
-  right: 10px;
-`;
-
-const Icon = styled.button`
-  vertical-align: middle;
-  cursor: pointer;
-`;
+// const SearchIconWrapper = styled.div`
+//   width: 50px;
+//   height: 100%;
+//   position: absolute;
+//   pointer-events: none;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   svg {
+//     width: 22px;
+//     height: 22px;
+//     stroke: ${(props) => props.theme.header.search.color};
+//     stroke-width: 2;
+//     stroke-linecap: round;
+//     stroke-linejoin: round;
+//     fill: none;
+//   }
+// `;
+//
+// const Input = styled(InputBase)`
+//   color: inherit;
+//   width: 100%;
+//   > input {
+//     color: ${(props) => props.theme.header.search.color};
+//     padding-top: ${(props) => props.theme.spacing(2.5)}px;
+//     padding-right: ${(props) => props.theme.spacing(2.5)}px;
+//     padding-bottom: ${(props) => props.theme.spacing(2.5)}px;
+//     padding-left: ${(props) => props.theme.spacing(12)}px;
+//     width: 100%;
+//   }
+// `;
+//
+// const GraphContainer = styled.div`
+//   height: 40%;
+//   width: 100vw;
+//   background-color: red;
+//   position: relative;
+// `;
+//
+// const FlowContainer = styled.div`
+//   height: 75%;
+//   width: 100vw;
+//   background-color: green;
+//   position: absolute;
+//   bottom: 0;
+//   left: ${({ flowTransition }) => flowTransition || "100%"};
+//   transition: 1s;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// `;
+//
+// const WaterLevelContainer = styled.div`
+//   height: 75%;
+//   width: 100vw;
+//   background-color: yellow;
+//   position: absolute;
+//   bottom: 0;
+//   right: ${({ waterLevelTransition }) => waterLevelTransition || "100%"};
+//   transition: 1s;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+// `;
+//
+// const GraphHeader = styled.div`
+//   height: 25%;
+//   width: 100vw;
+//   bottom: 0;
+//   right: 0;
+//   background-color: blue;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   color: white;
+// `;
+//
+// const DefaultContainer = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   color: white;
+//   margin: auto;
+//   padding: auto;
+// `;
+//
+//
+//
+// const BottomLeftIconContainer = styled.div`
+//   position: absolute;
+//   pointer-events: none;
+//   z-index: 2;
+//   bottom: 40px;
+//   left: 10px;
+// `;
+//
+// const BottomRightIconContainer = styled.div`
+//   position: absolute;
+//   pointer-events: none;
+//   z-index: 2;
+//   bottom: 40px;
+//   right: 10px;
+// `;
+//
+// const Icon = styled.button`
+//   vertical-align: middle;
+//   cursor: pointer;
+// `;
 
 const useStyles = makeStyles(() => ({
   propTable: {
@@ -199,7 +204,7 @@ function MobileMap() {
   const service = useService({ toast: false });
   const [map, setMap] = useState();
   const [mapIsLoaded, setMapIsLoaded] = useState(false);
-  const [currentGraphType, setCurrentGraphType] = useState(null);
+  // const [currentGraphType, setCurrentGraphType] = useState(null);
   const [currentSelectedPoint, setCurrentSelectedPoint] = useState(null);
   const mapContainerRef = useRef(null); // create a reference to the map container
   const coordinatesRef = useRef(null);
@@ -208,25 +213,25 @@ function MobileMap() {
   const latRef = useRef(null);
   const wellNameRef = useRef(null);
 
-  const [flowTransition, setFlowTransition] = useState("100%");
-  const handleFlowClick = () => {
-    setFlowTransition((state) => (state === "100%" ? "0%" : "100%"));
-    setWaterLevelTransition("100%");
-    setCurrentGraphType((state) => (state !== "Flow" ? "Flow" : null));
-    setCurrentSelectedPoint(null);
-    map.fire("closeAllPopups");
-  };
-
-  const [waterLevelTransition, setWaterLevelTransition] = useState("100%");
-  const handleWaterLevelClick = () => {
-    setWaterLevelTransition((state) => (state === "100%" ? "0%" : "100%"));
-    setFlowTransition("100%");
-    setCurrentGraphType((state) =>
-      state !== "Water Level" ? "Water Level" : null
-    );
-    setCurrentSelectedPoint(null);
-    map.fire("closeAllPopups");
-  };
+  // const [flowTransition, setFlowTransition] = useState("100%");
+  // const handleFlowClick = () => {
+  //   setFlowTransition((state) => (state === "100%" ? "0%" : "100%"));
+  //   setWaterLevelTransition("100%");
+  //   setCurrentGraphType((state) => (state !== "Flow" ? "Flow" : null));
+  //   setCurrentSelectedPoint(null);
+  //   map.fire("closeAllPopups");
+  // };
+  //
+  // const [waterLevelTransition, setWaterLevelTransition] = useState("100%");
+  // const handleWaterLevelClick = () => {
+  //   setWaterLevelTransition((state) => (state === "100%" ? "0%" : "100%"));
+  //   setFlowTransition("100%");
+  //   setCurrentGraphType((state) =>
+  //     state !== "Water Level" ? "Water Level" : null
+  //   );
+  //   setCurrentSelectedPoint(null);
+  //   map.fire("closeAllPopups");
+  // };
 
   const handleCopyCoords = (value) => {
     const dummy = document.createElement("input");
@@ -274,7 +279,7 @@ function MobileMap() {
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
       center: STARTING_LOCATION,
-      zoom: 10,
+      zoom: 11,
     });
 
     map.addControl(
@@ -292,7 +297,7 @@ function MobileMap() {
 
     // Add locate control to the map.
     map.addControl(new ResetZoomControl(), "top-right");
-    map.addControl(new LayersControl(), "top-left");
+    // map.addControl(new LayersControl(), "top-left");
 
     map.on("render", () => {
       map.resize();
@@ -541,25 +546,25 @@ function MobileMap() {
     }
   }, [isLoading, mapIsLoaded, map, data]); // eslint-disable-line
 
-  useEffect(() => {
-    if (map !== undefined) {
-      if (!currentGraphType) {
-        map.setFilter("locations", null);
-        map.setFilter("locations-labels", null);
-      } else {
-        map.setFilter("locations", [
-          "==",
-          ["get", "Measure Type"],
-          currentGraphType,
-        ]);
-        map.setFilter("locations-labels", [
-          "==",
-          ["get", "Measure Type"],
-          currentGraphType,
-        ]);
-      }
-    }
-  }, [currentGraphType]); // eslint-disable-line
+  // useEffect(() => {
+  //   if (map !== undefined) {
+  //     if (!currentGraphType) {
+  //       map.setFilter("locations", null);
+  //       map.setFilter("locations-labels", null);
+  //     } else {
+  //       map.setFilter("locations", [
+  //         "==",
+  //         ["get", "Measure Type"],
+  //         currentGraphType,
+  //       ]);
+  //       map.setFilter("locations-labels", [
+  //         "==",
+  //         ["get", "Measure Type"],
+  //         currentGraphType,
+  //       ]);
+  //     }
+  //   }
+  // }, [currentGraphType]); // eslint-disable-line
 
   useEffect(() => {
     if (currentSelectedPoint) {
@@ -573,12 +578,12 @@ function MobileMap() {
     <React.Fragment>
       <Helmet title="Mobile Map" />
       <MainContainer>
-        <Search>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <Input fullWidth placeholder="Search" />
-        </Search>
+        {/*<Search>*/}
+        {/*  <SearchIconWrapper>*/}
+        {/*    <SearchIcon />*/}
+        {/*  </SearchIconWrapper>*/}
+        {/*  <Input fullWidth placeholder="Search" />*/}
+        {/*</Search>*/}
         <MapContainer ref={mapContainerRef}>
           <Coordinates ref={coordinatesRef}>
             <strong>
@@ -597,39 +602,39 @@ function MobileMap() {
               <Coord ref={latRef} />
             </Tooltip>
           </Coordinates>
-          <Tooltip title="Water Level Points and Graph">
-            <BottomLeftIconContainer>
-              <div
-                className="mapboxgl-ctrl mapboxgl-ctrl-group "
-                onClick={handleWaterLevelClick}
-              >
-                <Icon className="material-icons">straighten</Icon>
-              </div>
-            </BottomLeftIconContainer>
-          </Tooltip>
-          <Tooltip title="Flow Points and Graph">
-            <BottomRightIconContainer>
-              <div
-                className="mapboxgl-ctrl mapboxgl-ctrl-group "
-                onClick={handleFlowClick}
-              >
-                <Icon className="material-icons">waves</Icon>
-              </div>
-            </BottomRightIconContainer>
-          </Tooltip>
+          {/*<Tooltip title="Water Level Points and Graph">*/}
+          {/*  <BottomLeftIconContainer>*/}
+          {/*    <div*/}
+          {/*      className="mapboxgl-ctrl mapboxgl-ctrl-group "*/}
+          {/*      onClick={handleWaterLevelClick}*/}
+          {/*    >*/}
+          {/*      <Icon className="material-icons">straighten</Icon>*/}
+          {/*    </div>*/}
+          {/*  </BottomLeftIconContainer>*/}
+          {/*</Tooltip>*/}
+          {/*<Tooltip title="Flow Points and Graph">*/}
+          {/*  <BottomRightIconContainer>*/}
+          {/*    <div*/}
+          {/*      className="mapboxgl-ctrl mapboxgl-ctrl-group "*/}
+          {/*      onClick={handleFlowClick}*/}
+          {/*    >*/}
+          {/*      <Icon className="material-icons">waves</Icon>*/}
+          {/*    </div>*/}
+          {/*  </BottomRightIconContainer>*/}
+          {/*</Tooltip>*/}
         </MapContainer>
-        <GraphContainer>
-          <GraphHeader>
-            THIS IS THE {currentGraphType ?? "HEADER AND ALL POINTS"}
-          </GraphHeader>
-          <DefaultContainer>DEFAULT</DefaultContainer>
-          <FlowContainer flowTransition={flowTransition}>
-            <LineChart />
-          </FlowContainer>
-          <WaterLevelContainer waterLevelTransition={waterLevelTransition}>
-            <LineChart />
-          </WaterLevelContainer>
-        </GraphContainer>
+        {/*<GraphContainer>*/}
+        {/*  <GraphHeader>*/}
+        {/*    THIS IS THE {currentGraphType ?? "HEADER AND ALL POINTS"}*/}
+        {/*  </GraphHeader>*/}
+        {/*  <DefaultContainer>DEFAULT</DefaultContainer>*/}
+        {/*  <FlowContainer flowTransition={flowTransition}>*/}
+        {/*    <LineChart />*/}
+        {/*  </FlowContainer>*/}
+        {/*  <WaterLevelContainer waterLevelTransition={waterLevelTransition}>*/}
+        {/*    <LineChart />*/}
+        {/*  </WaterLevelContainer>*/}
+        {/*</GraphContainer>*/}
       </MainContainer>
     </React.Fragment>
   );
