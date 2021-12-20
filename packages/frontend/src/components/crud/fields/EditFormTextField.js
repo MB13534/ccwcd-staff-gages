@@ -103,6 +103,7 @@ function EditFormTextField({
         }
         variant={variant}
         my={2}
+        disabled={field?.typeConfig?.disabled || false}
       />
 
       {touched[field.key] && (

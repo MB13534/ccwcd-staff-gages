@@ -13,6 +13,7 @@ import {
   List,
   Monitor,
   Users,
+  Map,
 } from "react-feather";
 
 import AuthGuard from "../components/AuthGuard";
@@ -34,6 +35,7 @@ import Default from "../pages/dashboards/Default";
 import { CrudProvider } from "../CrudProvider";
 import CRUD from "../pages/docs/CRUD";
 import Deploy from "../pages/docs/Deploy";
+import MobileMap from "../pages/maps/MobileMap";
 const Account = async(() => import("../pages/pages/Account"));
 const Profile = async(() => import("../pages/pages/Profile"));
 
@@ -44,7 +46,7 @@ const getSidebarMenu = (list) => {
   return list.map((item) => {
     const slug = inflector.dasherize(inflector.underscore(item.name));
     return {
-      id: inflector.titleize(item.name),
+      id: item.sidebarName ?? inflector.titleize(item.name),
       path: `/models/${slug}`,
       model: inflector.singularize(item.name),
       icon: item.icon || <Database />,
@@ -133,6 +135,15 @@ const landingRoutes = {
   icon: <Monitor />,
   component: Landing,
   children: null,
+};
+
+const mapRoutes = {
+  header: "Mobile",
+  id: "Map",
+  icon: <Map />,
+  path: "/mobile-map",
+  name: "Map",
+  component: MobileMap,
 };
 
 const mainRoutes = {
@@ -317,7 +328,7 @@ export const dashboardMaxContentLayoutRoutes = [
 export const authLayoutRoutes = [accountRoutes];
 
 // Routes using the Presentation layout
-export const presentationLayoutRoutes = [landingRoutes];
+export const presentationLayoutRoutes = [landingRoutes, mapRoutes];
 
 // Routes that are protected
 export const protectedRoutes = [protectedPageRoutes];
@@ -326,6 +337,7 @@ export const protectedRoutes = [protectedPageRoutes];
 export const sidebarRoutes = [
   mainRoutes,
   ...crudSidebarMenu,
+  mapRoutes,
   adminRoutes,
   componentsRoutes,
   documentationRoutes,

@@ -1,19 +1,18 @@
 import React from "react";
-import { Map, Droplet, Activity, Box } from "react-feather";
-import AdminGuard from "../components/AdminGuard";
-import AdminVisibilityFilter from "../components/AdminVisibilityFilter";
+import { Activity } from "react-feather";
+// import AdminGuard from "../components/AdminGuard";
+// import AdminVisibilityFilter from "../components/AdminVisibilityFilter";
+
+export const STARTING_LOCATION = [-104.7792492874415, 40.28404640928887];
 
 // Configuration
 export const CRUD_MODELS = [
-  { name: "Regions", icon: <Map />, header: "Data Management" },
   {
-    name: "Wells",
-    icon: <Droplet />,
-    guard: AdminGuard,
-    visibilityFilter: AdminVisibilityFilter,
+    sidebarName: "Measurement Stations",
+    name: "ListMeasurementStationsUps",
+    icon: <Activity />,
+    header: "Data Management",
   },
-  { name: "Measurements", icon: <Activity /> },
-  { name: "WellTypes", icon: <Box />, header: "Lookup Tables" },
 ];
 
 export const THEME = {

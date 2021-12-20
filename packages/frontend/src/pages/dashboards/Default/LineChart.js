@@ -1,24 +1,15 @@
 import React from "react";
 import styled, { withTheme } from "styled-components/macro";
-import {
-  Card as MuiCard,
-  CardContent,
-  CardHeader,
-  IconButton,
-} from "@material-ui/core";
-
-import { spacing } from "@material-ui/system";
 
 import { fade } from "@material-ui/core/styles/colorManipulator";
 
 import { Line } from "react-chartjs-2";
 
-import { MoreVertical } from "react-feather";
-
-const Card = styled(MuiCard)(spacing);
-
 const ChartWrapper = styled.div`
-  height: 378px;
+  height: 100%;
+  width: 100%;
+  background: white;
+  padding: 20px;
 `;
 
 function LineChart({ theme }) {
@@ -115,21 +106,9 @@ function LineChart({ theme }) {
   };
 
   return (
-    <Card mb={3}>
-      <CardHeader
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertical />
-          </IconButton>
-        }
-        title="Groundwater Elevation"
-      />
-      <CardContent>
-        <ChartWrapper>
-          <Line data={data} options={options} />
-        </ChartWrapper>
-      </CardContent>
-    </Card>
+    <ChartWrapper>
+      <Line data={data} options={options} />
+    </ChartWrapper>
   );
 }
 export default withTheme(LineChart);
