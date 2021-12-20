@@ -17,7 +17,8 @@ import { makeStyles } from "@material-ui/core/styles";
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
 const MainContainer = styled.div`
-  height: 100vh;
+  position: fixed;
+  height: 100%;
   width: 100vw;
 `;
 
@@ -50,8 +51,8 @@ const Search = styled.div`
   background-color: rgba(255, 255, 255, 0.5);
   position: absolute;
   top: 7px;
-  left: 50px;
-  width: calc(100% - 100px);
+  left: 60px;
+  width: calc(100% - 120px);
   z-index: 10000;
   &:hover {
     background-color: white;

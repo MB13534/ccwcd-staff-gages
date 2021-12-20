@@ -7,14 +7,21 @@ const GlobalStyle = createGlobalStyle`
   html,
   body,
   #root {
+    // height: calc(100vh - calc(100vh - 100%))
+
+    // height: 100vh;
+    // max-height: -webkit-fill-available;
+
+    position: fixed;
     height: 100%;
+
     overflow-x: hidden;
   }
 
   body {
     background: ${(props) => props.theme.palette.background.default};
   }
-  
+
   *::-webkit-scrollbar {
     width: 16px;
     height: 16px;
