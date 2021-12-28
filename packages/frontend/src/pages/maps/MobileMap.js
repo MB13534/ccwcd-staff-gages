@@ -3,6 +3,10 @@ import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-load
 import styled from "styled-components/macro";
 import { Helmet } from "react-helmet-async";
 
+import _ from "lodash";
+
+import MapboxglSpiderifier from "mapboxgl-spiderifier";
+
 import { STARTING_LOCATION } from "../../constants";
 import ResetZoomControl from "../../components/map/ResetZoomControl";
 // import LayersControl from "../../components/map/LayersControl";
@@ -16,6 +20,8 @@ import { findRawRecords } from "../../services/crudService";
 import { useQuery } from "react-query";
 import useService from "../../hooks/useService";
 import { makeStyles } from "@material-ui/core/styles";
+
+import "./styles.css";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -212,6 +218,7 @@ function MobileMap() {
   const longRef = useRef(null);
   const latRef = useRef(null);
   const wellNameRef = useRef(null);
+  const SPIDERFY_FROM_ZOOM = 14;
 
   // const [flowTransition, setFlowTransition] = useState("100%");
   // const handleFlowClick = () => {
@@ -276,7 +283,7 @@ function MobileMap() {
 
   useEffect(() => {
     const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
+      container: "map",
       style: "mapbox://styles/mapbox/streets-v11",
       center: STARTING_LOCATION,
       zoom: 11,
@@ -306,19 +313,86 @@ function MobileMap() {
       setMapIsLoaded(true);
       map.resize();
       setMap(map);
+      // setSpiderifier(spiderifier);
     });
   }, []);
 
   useEffect(() => {
-    if (mapIsLoaded && data?.length > 0 && typeof map != "undefined") {
-      if (!map.getSource("locations")) {
-        map.addSource("locations", {
+    if (
+      mapIsLoaded &&
+      data?.length > 0 &&
+      typeof map != "undefined"
+      // &&
+      // typeof spiderifier != "undefined"
+    ) {
+      const spiderifier = new MapboxglSpiderifier(map, {
+        customPin: false,
+        animate: true,
+        animationSpeed: 500,
+        circleFootSeparation: 40,
+        onClick: function (e, marker) {
+          // console.log("marker", marker);
+        },
+        initializeLeg: initializeSpiderLeg,
+      });
+
+      function initializeSpiderLeg(spiderLeg) {
+        var pinElem = spiderLeg.elements.pin;
+        var feature = spiderLeg.feature;
+        var popup = new mapboxgl.Popup({
+          maxWidth: "310px",
+          offset: MapboxglSpiderifier.popupOffsetForSpiderLeg(spiderLeg),
+        });
+
+        const html =
+          '<div class="' +
+          classes.popupWrap +
+          '"><h3>Properties</h3><table class="' +
+          classes.propTable +
+          '"><tbody>' +
+          `<tr><td><strong>Enter Data</strong></td><td><a href="/models/list-measurement-stations-ups/${feature.id}">Link</a></td></tr>` +
+          Object.entries(feature)
+            .map(([k, v]) => {
+              if (["map_lon_dd", "map_lat_dd", "station_ndx", "id"].includes(k))
+                return null;
+              if (!v) return null;
+              return `<tr><td><strong>${k}</strong></td><td>${v}</td></tr>`;
+            })
+            .join("") +
+          "</tbody></table></div>";
+
+        pinElem.style.backgroundColor = feature["Last Value"]
+          ? "#74E0FF"
+          : "#8D9093";
+
+        pinElem.addEventListener(
+          "click",
+          function () {
+            map.fire("closeAllPopups");
+            popup.setHTML(html).addTo(map);
+            spiderLeg.mapboxMarker.setPopup(popup);
+            // e.stopPropagation();
+          },
+          true
+        );
+
+        map.on("closeAllPopups", () => {
+          popup.remove();
+          coordinatesRef.current.style.display = "none";
+        });
+      }
+
+      if (!map.getSource("pins")) {
+        map.addSource("pins", {
           type: "geojson",
+          cluster: true,
+          clusterMaxZoom: 20, // Max zoom to cluster points on
+          clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
           data: {
             type: "FeatureCollection",
             features: data.map((location) => {
               return {
-                type: "Feature",
+                type: "feature",
                 id: location.station_ndx,
                 properties: {
                   "Well Name": location.map_display_name,
@@ -340,79 +414,150 @@ function MobileMap() {
           },
         });
 
-        // Add a layer showing the places.
-        if (!map.getLayer("locations")) {
-          map.addLayer({
-            id: "locations",
-            type: "circle",
-            source: "locations",
-            paint: {
-              "circle-radius": {
-                base: 2,
-                stops: [
-                  [10, 6],
-                  [14, 12],
-                ],
-              },
-              "circle-color": [
-                "case",
-                ["boolean", ["to-boolean", ["get", "Last Value"]], false],
-                "#74E0FF",
-                "#8D9093",
-              ],
-              "circle-stroke-width": [
-                "case",
-                ["boolean", ["feature-state", "clicked"], false],
-                4,
-                1,
-              ],
-              "circle-stroke-color": [
-                "case",
-                ["boolean", ["feature-state", "clicked"], false],
-                "yellow",
-                "black",
-              ],
-            },
+        map.addLayer({
+          id: "pins",
+          type: "circle",
+          source: "pins",
+          filter: ["all", ["!has", "point_count"]],
+          paint: {
+            "circle-color": [
+              "case",
+              ["boolean", ["to-boolean", ["get", "Last Value"]], false],
+              "#74E0FF",
+              "#8D9093",
+            ],
+            "circle-radius": 10,
+            "circle-stroke-width": [
+              "case",
+              ["boolean", ["feature-state", "clicked"], false],
+              4,
+              1,
+            ],
+            "circle-stroke-color": [
+              "case",
+              ["boolean", ["feature-state", "clicked"], false],
+              "yellow",
+              "black",
+            ],
+          },
+        });
+      }
+
+      // Add a layer showing the places.
+      if (!map.getLayer("cluster-pins")) {
+        map.addLayer({
+          id: "cluster-pins",
+          type: "circle",
+          source: "pins",
+          filter: ["all", ["has", "point_count"]],
+          paint: {
+            "circle-color": [
+              "step",
+              ["get", "point_count"],
+              "#62e062",
+              3,
+              "#f1f075",
+              5,
+              "#f28cb1",
+            ],
+            "circle-radius": ["step", ["get", "point_count"], 13, 3, 17, 5, 21],
+            "circle-stroke-width": 2,
+            "circle-stroke-color": "black",
+          },
+        });
+
+        map.addLayer({
+          id: "cluster-pins-count",
+          type: "symbol",
+          source: "pins",
+          filter: ["has", "point_count"],
+          layout: {
+            "text-field": "{point_count_abbreviated}",
+            "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+            "text-size": 12,
+          },
+        });
+
+        map.addLayer({
+          id: "locations-labels",
+          type: "symbol",
+          source: "pins",
+          minzoom: 11,
+          layout: {
+            "text-field": ["get", "Well Name"],
+            "text-offset": [0, -2],
+            "text-size": 14,
+          },
+          paint: {
+            "text-halo-color": "#ffffff",
+            "text-halo-width": 200,
+          },
+        });
+
+        map.on("click", mouseClick);
+        map.on("zoomstart", function () {
+          spiderifier.unspiderfy();
+        });
+
+        function mouseClick(e) {
+          var features = map.queryRenderedFeatures(e.point, {
+            layers: ["cluster-pins"],
           });
 
-          map.addLayer({
-            id: "locations-labels",
-            type: "symbol",
-            source: "locations",
-            minzoom: 12,
-            layout: {
-              "text-field": ["get", "Well Name"],
-              "text-offset": [0, -2],
-              "text-size": 14,
-            },
-            paint: {
-              "text-halo-color": "#ffffff",
-              "text-halo-width": 0.5,
-            },
-          });
+          // spiderifier.unspiderfy();
+          if (!features.length) {
+            return;
+          } else if (map.getZoom() < SPIDERFY_FROM_ZOOM) {
+            map.flyTo({ center: e.lngLat, zoom: map.getZoom() + 2 });
+          } else {
+            map
+              .getSource("pins")
+              .getClusterLeaves(
+                features[0].properties.cluster_id,
+                100,
+                0,
+                function (err, leafFeatures) {
+                  if (err) {
+                    return console.error(
+                      "error while getting leaves of a cluster",
+                      err
+                    );
+                  }
+                  var markers = _.map(leafFeatures, function (leafFeature) {
+                    return leafFeature.properties;
+                  });
+                  spiderifier.spiderfy(
+                    features[0].geometry.coordinates,
+                    markers
+                  );
+                }
+              );
+          }
         }
+
+        //_____________________________________________________________
 
         //makes currently selected point yellow
         //removes previously yellow colored point
-        map.on("click", "locations", (e) => {
+        map.on("click", "pins", (e) => {
           if (e.features.length > 0) {
             if (currentlyPaintedPointRef.current) {
               map.setFeatureState(
-                { source: "locations", id: currentlyPaintedPointRef.current },
+                { source: "pins", id: currentlyPaintedPointRef.current },
                 { clicked: false }
               );
             }
             currentlyPaintedPointRef.current = e.features[0].id;
             map.setFeatureState(
-              { source: "locations", id: e.features[0].id },
+              { source: "pins", id: e.features[0].id },
               { clicked: true }
             );
           }
         });
 
-        // //set well number used to fetch data for graph
-        // //fly to graph
-        map.on("click", "locations", (e) => {
+        //set well number used to fetch data for graph
+        //fly to graph
+        map.on("click", "pins", (e) => {
           setCurrentSelectedPoint(e.features[0].properties["station_ndx"]);
           map.flyTo({
             center: [
@@ -420,16 +565,15 @@ function MobileMap() {
               e.features[0].properties.map_lat_dd,
             ],
             zoom: 14,
-            padding: { bottom: 200 },
+            // padding: { bottom: 400 },
           });
         });
-        //
-        // //for lat/long display
-        map.on("click", "locations", onPointClick);
-        //
-        map.on("click", "locations", (e) => {
-          let popup = new mapboxgl.Popup({ maxWidth: "310px" });
 
+        // //for lat/long display
+        map.on("click", "pins", onPointClick);
+        //
+        map.on("click", "pins", (e) => {
+          let popup = new mapboxgl.Popup({ maxWidth: "310px" });
           let data = e.features[0].properties;
 
           // Copy coordinates array.
@@ -470,7 +614,7 @@ function MobileMap() {
             coordinatesRef.current.style.display = "none";
             map.setFeatureState(
               {
-                source: "locations",
+                source: "pins",
                 id: currentlyPaintedPointRef.current,
               },
               { clicked: false }
@@ -485,62 +629,31 @@ function MobileMap() {
           handleCopyCoords(e.target.innerHTML)
         );
 
+        // map.on("click", "clusters", (e) => {
+        //   const features = map.queryRenderedFeatures(e.point, {
+        //     layers: ["clusters"],
+        //   });
+        //   const clusterId = features[0].properties.cluster_id;
+        //   map
+        //     .getSource("locations")
+        //     .getClusterExpansionZoom(clusterId, (err, zoom) => {
+        //       if (err) return;
+        //
+        //       map.flyTo({
+        //         center: features[0].geometry.coordinates,
+        //         zoom: zoom,
+        //       });
+        //     });
+        // });
+
         // Change the cursor to a pointer when the mouse is over the places layer.
-        map.on("mouseenter", "locations", () => {
+        map.on("mouseenter", "pins", () => {
           map.getCanvas().style.cursor = "pointer";
 
-          map.on("mouseleave", "locations", () => {
+          map.on("mouseleave", "pins", () => {
             map.getCanvas().style.cursor = "";
           });
         });
-
-        let hoverID = null;
-
-        map.on("mousemove", "locations", (e) => {
-          if (e.features.length === 0) return;
-
-          if (hoverID) {
-            map.setFeatureState(
-              {
-                source: "locations",
-                id: hoverID,
-              },
-              {
-                hover: false,
-              }
-            );
-          }
-
-          hoverID = e.features[0].id;
-
-          map.setFeatureState(
-            {
-              source: "locations",
-              id: hoverID,
-            },
-            {
-              hover: true,
-            }
-          );
-        });
-
-        // When the mouse leaves the earthquakes-viz layer, update the
-        // feature state of the previously hovered feature
-        map.on("mouseleave", "locations", () => {
-          if (hoverID) {
-            map.setFeatureState(
-              {
-                source: "locations",
-                id: hoverID,
-              },
-              {
-                hover: false,
-              }
-            );
-          }
-          hoverID = null;
-        });
-
         // Change it back to a pointer when it leaves.
       }
     }
@@ -584,7 +697,7 @@ function MobileMap() {
         {/*  </SearchIconWrapper>*/}
         {/*  <Input fullWidth placeholder="Search" />*/}
         {/*</Search>*/}
-        <MapContainer ref={mapContainerRef}>
+        <MapContainer ref={mapContainerRef} id="map">
           <Coordinates ref={coordinatesRef}>
             <strong>
               <WellName ref={wellNameRef} />

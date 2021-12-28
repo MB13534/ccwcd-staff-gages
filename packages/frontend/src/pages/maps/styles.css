@@ -1,0 +1,88 @@
+/*.spider-leg-container .spider-leg-pin{*/
+/*  position: relative;*/
+/*  width: 22px;*/
+/*  height: 22px;*/
+/*  margin-left: -8px;*/
+/*  margin-top: -18px;*/
+/*  background-image: url(https://api.mapbox.com/styles/v1/mapbox/dark-v9/sprite.png?access_token=pk.eyJ1Ijoic29jcmF0YSIsImEiOiJjaXJxc2wzam0waGU5ZmZtODhqd2ttamdxIn0.1ZQEByXoDD7fGIa9lUHIqg);*/
+/*  background-position: -110px -110px;*/
+/*}*/
+/*.spider-leg-container .spider-leg-line {*/
+/*  background-color: #f4f4f4;*/
+/*}*/
+/*.spider-leg-container:hover .spider-leg-line {*/
+/*  background-color: #f404f4;*/
+/*}*/
+
+
+.spider-leg-container {
+  width: 1px;
+  height: 1px;
+  /*overflow: display;*/
+  will-change: transform;
+}
+
+.spider-leg-container:hover { cursor: pointer }
+
+.spider-leg-container .spider-leg-pin {
+  position: relative;
+  z-index: 1;
+}
+
+.spider-leg-container .spider-leg-pin.default-spider-pin{
+  position: relative;
+  border-radius: 50%;
+  width: 21px;
+  height: 21px;
+  margin-left: -10.5px;
+  margin-top: -10.5px;
+  border: 1px solid black;
+}
+
+.spider-leg-container .spider-leg-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  background-color: #343434;
+  opacity: 0.45;
+  transform-origin: bottom;
+  z-index: 0;
+  height: 0;
+}
+
+.spider-leg-container:hover .spider-leg-line { opacity: 1 }
+
+/* Animations specific styles */
+
+.spider-leg-container.animate {
+  -webkit-transition: margin 0.15s linear;
+  -moz-transition: margin 0.15s linear;
+  /*-ms-transition: margin 0.15s linear;*/
+  -o-transition: margin 0.15s linear;
+  transition: margin 0.15s linear;
+}
+
+.spider-leg-container.initial,
+.spider-leg-container.exit {
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+  height: 0;
+}
+
+.spider-leg-container.animate .spider-leg-line {
+  -webkit-transition: all 0.15s linear;
+  -moz-transition: all 0.15s linear;
+  /*-ms-transition: all 0.15s linear;*/
+  -o-transition: all 0.15s linear;
+  transition: all 0.15s linear;
+
+  -webkit-transition-delay: inherit;
+  -moz-transition-delay: inherit;
+  /*-ms-transition-delay: inherit;*/
+  -o-transition-delay: inherit;
+  transition-delay: inherit;
+}
+
+.spider-leg-container.animate.initial .spider-leg-line,
+.spider-leg-container.animate.exit .spider-leg-line { height: 0 !important }
