@@ -203,6 +203,12 @@ const useStyles = makeStyles(() => ({
     maxHeight: 200,
     overflowY: "scroll",
   },
+  selected: {
+    borderColor: "yellow !important",
+    width: "25px !important",
+    height: "25px !important",
+    borderWidth: "4px !important",
+  },
 }));
 
 function MobileMap() {
@@ -211,14 +217,14 @@ function MobileMap() {
   const [map, setMap] = useState();
   const [mapIsLoaded, setMapIsLoaded] = useState(false);
   // const [currentGraphType, setCurrentGraphType] = useState(null);
-  const [currentSelectedPoint, setCurrentSelectedPoint] = useState(null);
+  // const [currentSelectedPoint, setCurrentSelectedPoint] = useState(null);
   const mapContainerRef = useRef(null); // create a reference to the map container
   const coordinatesRef = useRef(null);
   const currentlyPaintedPointRef = useRef(null);
   const longRef = useRef(null);
   const latRef = useRef(null);
   const wellNameRef = useRef(null);
-  const SPIDERFY_FROM_ZOOM = 14;
+  const SPIDERFY_FROM_ZOOM = 15;
 
   // const [flowTransition, setFlowTransition] = useState("100%");
   // const handleFlowClick = () => {
@@ -318,21 +324,12 @@ function MobileMap() {
   }, []);
 
   useEffect(() => {
-    if (
-      mapIsLoaded &&
-      data?.length > 0 &&
-      typeof map != "undefined"
-      // &&
-      // typeof spiderifier != "undefined"
-    ) {
+    if (mapIsLoaded && data?.length > 0 && typeof map != "undefined") {
       const spiderifier = new MapboxglSpiderifier(map, {
         customPin: false,
         animate: true,
         animationSpeed: 500,
         circleFootSeparation: 40,
-        onClick: function (e, marker) {
-          // console.log("marker", marker);
-        },
         initializeLeg: initializeSpiderLeg,
       });
 
@@ -365,12 +362,45 @@ function MobileMap() {
           ? "#74E0FF"
           : "#8D9093";
 
+        if (feature.station_ndx === currentlyPaintedPointRef.current) {
+          pinElem.classList.add(classes.selected);
+          pinElem.id = feature.station_ndx;
+        }
+
         pinElem.addEventListener(
           "click",
           function () {
             map.fire("closeAllPopups");
             popup.setHTML(html).addTo(map);
             spiderLeg.mapboxMarker.setPopup(popup);
+
+            pinElem.id = feature.station_ndx;
+            coordinatesRef.current.style.display = "block";
+            wellNameRef.current.innerHTML = feature["Well Name"];
+            longRef.current.innerHTML = feature["map_lon_dd"];
+            latRef.current.innerHTML = feature["map_lat_dd"];
+
+            if (currentlyPaintedPointRef.current) {
+              const lastPointId = document.getElementById(
+                currentlyPaintedPointRef.current
+              );
+
+              if (lastPointId) {
+                lastPointId.classList.remove(classes.selected);
+              }
+
+              map.setFeatureState(
+                { source: "pins", id: currentlyPaintedPointRef.current },
+                { clicked: false }
+              );
+            }
+            currentlyPaintedPointRef.current = feature.station_ndx;
+            pinElem.classList.add(classes.selected);
+            map.setFeatureState(
+              { source: "pins", id: feature.station_ndx },
+              { clicked: true }
+            );
+
             // e.stopPropagation();
           },
           true
@@ -510,6 +540,7 @@ function MobileMap() {
           } else if (map.getZoom() < SPIDERFY_FROM_ZOOM) {
             map.flyTo({ center: e.lngLat, zoom: map.getZoom() + 2 });
           } else {
+            map.flyTo({ center: e.lngLat });
             map
               .getSource("pins")
               .getClusterLeaves(
@@ -558,7 +589,7 @@ function MobileMap() {
         //set well number used to fetch data for graph
         //fly to graph
         map.on("click", "pins", (e) => {
-          setCurrentSelectedPoint(e.features[0].properties["station_ndx"]);
+          // setCurrentSelectedPoint(e.features[0].properties["station_ndx"]);
           map.flyTo({
             center: [
               e.features[0].properties.map_lon_dd,
@@ -609,17 +640,17 @@ function MobileMap() {
 
           popup.setLngLat(coordinates).setHTML(html).addTo(map);
 
-          map.on("closeAllPopups", () => {
-            popup.remove();
-            coordinatesRef.current.style.display = "none";
-            map.setFeatureState(
-              {
-                source: "pins",
-                id: currentlyPaintedPointRef.current,
-              },
-              { clicked: false }
-            );
-          });
+          // map.on("closeAllPopups", () => {
+          //   popup.remove();
+          //   coordinatesRef.current.style.display = "none";
+          //   map.setFeatureState(
+          //     {
+          //       source: "pins",
+          //       id: currentlyPaintedPointRef.current,
+          //     },
+          //     { clicked: false }
+          //   );
+          // });
         });
 
         longRef.current.addEventListener("click", (e) =>
@@ -678,12 +709,6 @@ function MobileMap() {
   //     }
   //   }
   // }, [currentGraphType]); // eslint-disable-line
-
-  useEffect(() => {
-    if (currentSelectedPoint) {
-      console.log(currentSelectedPoint);
-    }
-  }, [currentSelectedPoint]);
 
   if (error) return "An error has occurred: " + error.message;
 
