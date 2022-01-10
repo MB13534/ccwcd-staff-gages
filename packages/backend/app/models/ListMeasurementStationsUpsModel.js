@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const {INTEGER, TEXT, UUID, REAL, DATE, NUMBER, BOOLEAN} = DataTypes;
+  const {INTEGER, TEXT, UUID, REAL, DATE, NUMBER, BOOLEAN, ARRAY} = DataTypes;
   const ListMeasurementStationsUps = sequelize.define(
     'list_measurement_stations_ups',
     {
@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         type: BOOLEAN,
       },
       applies_to: {
-        type: TEXT,
+        type: ARRAY(TEXT),
       },
       de_new_value: {
         type: REAL,

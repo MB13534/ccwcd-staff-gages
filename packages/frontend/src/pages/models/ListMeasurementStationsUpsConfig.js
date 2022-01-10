@@ -151,7 +151,7 @@ export const fields = [
     name: "New Value",
     key: "de_new_value",
     required: true,
-    type: CRUD_FIELD_TYPES.TEXT,
+    type: CRUD_FIELD_TYPES.NUMBER,
     cols: 12,
     isOpen: true,
   },
