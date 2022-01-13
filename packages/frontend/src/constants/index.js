@@ -1,19 +1,23 @@
 import React from "react";
-import { Activity } from "react-feather";
-// import AdminGuard from "../components/AdminGuard";
-// import AdminVisibilityFilter from "../components/AdminVisibilityFilter";
+import Speed from "@material-ui/icons/Speed";
+import AdminGuard from "../components/AdminGuard";
+import AdminVisibilityFilter from "../components/AdminVisibilityFilter";
 
 export const STARTING_LOCATION = [-104.7792492874415, 40.28404640928887];
 
 // Configuration
 export const CRUD_MODELS = [
   {
-    sidebarName: "Measurement Stations",
-    name: "ListMeasurementStationsUps",
-    icon: <Activity />,
     header: "Data Management",
+    name: "ListMeasurementStationsUps",
+    sidebarName: "Measurement Stations",
+    icon: <Speed />,
+    guard: AdminGuard,
+    visibilityFilter: AdminVisibilityFilter,
   },
 ];
+
+export const CRUD_LOOKUP_TABLES = [];
 
 export const THEME = {
   MAIN_SIDEBAR_WIDTH: 258,
@@ -39,6 +43,7 @@ export const ROUTES = {
   USER_LOGOUT: "/account/logout",
   MODELS: "/models",
   PRIVATE: "/private",
+  PAGE_PRODUCTION: "/data-access/well-production-data-entry",
   NOTFOUND: "/404",
   PAGE_BLANK: "/coming-soon",
   PAGE_DASHBOARD: "/dashboard",
@@ -48,6 +53,7 @@ export const ROUTES = {
   PAGE_DOCS_DEPLOY: "/documentation/deploy",
   PAGE_DOCS_STATE_MANAGEMENT: "/documentation/state-management",
   PAGE_DOCS_SUPPORT: "/documentation/support",
+  MOBILE_MAP: "/mobile-map",
 };
 
 export const CONTENT_NODE_STATUS_IDS = {
@@ -99,6 +105,9 @@ export const CRUD_FIELD_TYPES = {
   CUSTOM: "CUSTOM",
   DIVIDER: "DIVIDER",
   SECTION_HEADER: "SECTION_HEADER",
+  SPLIT_STRING_DROPDOWN: "SPLIT_STRING_DROPDOWN",
+  READ_ONLY_ARRAY_OF_LINKS: "READ_ONLY_ARRAY_OF_LINKS",
+  READ_ONLY_ARRAY_OF_STRINGS: "READ_ONLY_ARRAY_OF_STRINGS",
 };
 
 export const CRUD_DISPLAY_MODES = {

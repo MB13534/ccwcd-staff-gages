@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import { THEMES } from "../../constants";
 import { Helmet } from "react-helmet-async";
 
-import "../../vendor/roundedBarCharts";
+// import "../../vendor/roundedBarCharts";
 
 import { blue, green, grey, orange, red } from "@material-ui/core/colors";
 
@@ -148,9 +148,9 @@ function Details() {
         <Spacer mb={4} />
 
         <Centered>
-          <Avatar alt={user.nickname} src={user.picture} />
+          <Avatar alt={user.name} src={user.picture} />
           <Typography variant="body2" component="div" gutterBottom>
-            <Box fontWeight="fontWeightBold">{user.nickname}</Box>
+            <Box fontWeight="fontWeightBold">{user.name}</Box>
             <Box fontWeight="fontWeightRegular">{user.email}</Box>
             {user.email_verified && (
               <Tooltip title="Email address has been verified.">

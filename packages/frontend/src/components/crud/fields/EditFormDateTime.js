@@ -82,15 +82,17 @@ function EditFormDateTime({
   const DateTimeComponent = config.keyboard
     ? MuiKeyboardDateTimePicker
     : MuiDateTimePicker;
-
   useEffect(() => {
     if (
       field.defaultValue !== null &&
-      typeof field.defaultValue !== "undefined"
+      typeof field.defaultValue !== "undefined" &&
+      (data[field.key] === null ||
+        typeof data[field.key] === "undefined" ||
+        data[field.key] === "")
     ) {
       setFieldValue(field.key, field.defaultValue);
     }
-  }, [field.defaultValue, setFieldValue, field.key]);
+  }, [field.defaultValue, setFieldValue, field.key, data]);
 
   return (
     <EditFormFieldWrap
@@ -105,7 +107,7 @@ function EditFormDateTime({
       {type === CRUD_FIELD_TYPES.DATE && (
         <DateComponent
           name={field.key}
-          value={values[field.key] ?? null}
+          value={values[field.key] || null}
           error={hasError}
           fullWidth
           inputProps={{ tabIndex: index + 1 }}
@@ -123,7 +125,7 @@ function EditFormDateTime({
           variant={config.variant ?? "inline"}
           format={config.format ?? THEME.DATE_FORMAT_SHORT}
           inputVariant={variant}
-          KeyboardButtonProps={config.keyboard ? { size: "small" } : undefined}
+          // KeyboardButtonProps={config.keyboard ? { size: "small" } : undefined}
           InputProps={{
             endAdornment: config.icon && (
               <InputAdornment position="end">
@@ -140,7 +142,7 @@ function EditFormDateTime({
       {type === CRUD_FIELD_TYPES.TIME && (
         <TimeComponent
           name={field.key}
-          value={values[field.key] ?? null}
+          value={values[field.key] || null}
           error={hasError}
           fullWidth
           inputProps={{ tabIndex: index + 1 }}
@@ -158,7 +160,7 @@ function EditFormDateTime({
           variant={config.variant ?? "inline"}
           format={config.format ?? THEME.TIME_FORMAT_SHORT}
           inputVariant={variant}
-          KeyboardButtonProps={config.keyboard ? { size: "small" } : undefined}
+          // KeyboardButtonProps={config.keyboard ? { size: "small" } : undefined}
           keyboardIcon={<AccessTime />}
           InputProps={{
             endAdornment: config.icon && (
@@ -176,7 +178,7 @@ function EditFormDateTime({
       {type === CRUD_FIELD_TYPES.DATETIME && (
         <DateTimeComponent
           name={field.key}
-          value={values[field.key] ?? null}
+          value={values[field.key] || null}
           error={hasError}
           fullWidth
           inputProps={{ tabIndex: index + 1 }}
@@ -194,7 +196,7 @@ function EditFormDateTime({
           variant={config.variant ?? "inline"}
           format={config.format ?? THEME.DATETIME_FORMAT_SHORT}
           inputVariant={variant}
-          KeyboardButtonProps={config.keyboard ? { size: "small" } : undefined}
+          // KeyboardButtonProps={config.keyboard ? { size: "small" } : undefined}
           InputProps={{
             endAdornment: config.icon && (
               <InputAdornment position="end">

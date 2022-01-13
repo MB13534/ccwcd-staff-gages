@@ -5,6 +5,10 @@ export const displayName = (row) => {
   return `${row.map_display_name}`;
 };
 
+export const crudModelNameLabels = {
+  standard: "Measurement Station",
+};
+
 export function columns(modelName) {
   return [
     {
@@ -22,36 +26,24 @@ export function columns(modelName) {
       },
     },
     {
-      field: "content_node_statuses.name",
-      renderHeader: Renderers.StatusHelpIconRenderer,
-      width: 20,
-      sortable: false,
-      disableColumnMenu: true,
-      disableReorder: true,
-      filterable: false,
-      resizeable: false,
-      align: "center",
-      renderCell: Renderers.StatusDotRenderer,
-    },
-    {
       field: "station_ndx",
       headerName: "Station Index",
-      width: 150,
+      width: 180,
     },
     {
       field: "map_display_name",
-      headerName: "Map Display Name",
-      width: 150,
+      headerName: "Measurement Site",
+      width: 220,
     },
     {
       field: "measure_type",
       headerName: "Measure Type",
-      width: 150,
+      width: 200,
     },
     {
       field: "measure_units",
-      headerName: "Measure Units",
-      width: 150,
+      headerName: "Staff Gage Units",
+      width: 220,
     },
     {
       field: "last_value",
@@ -61,7 +53,7 @@ export function columns(modelName) {
     {
       field: "last_report",
       headerName: "Last Report",
-      width: 150,
+      width: 160,
     },
     {
       field: "map_lon_dd",
@@ -95,38 +87,42 @@ export function columns(modelName) {
     },
     {
       field: "de_new_value",
-      headerName: "New Value",
-      width: 150,
+      headerName: "Staff Gage Reading",
+      width: 240,
     },
     {
       field: "de_new_value_comments",
-      headerName: "New Value Comments",
+      headerName: "Notes",
       width: 150,
     },
     {
-      field: "id",
-      headerName: "ID",
-      width: 100,
-      renderCell: Renderers.IdRenderer,
-    },
-    {
-      field: "created_at",
-      headerName: "Created At",
-      width: 250,
+      field: "entry_timestamp",
+      headerName: "Reading Date/Time",
+      width: 240,
       renderCell: Renderers.DateRenderer,
     },
     {
-      field: "updated_at",
-      headerName: "Updated At",
-      width: 200,
-      renderCell: Renderers.DateRenderer,
+      field: "structure_name",
+      headerName: "Structure",
+      width: 150,
     },
   ];
 }
 
 export const fields = [
   {
-    name: "Map Display Name",
+    name: "Structure",
+    key: "structure_name",
+    required: true,
+    type: CRUD_FIELD_TYPES.TEXT,
+    typeConfig: {
+      disabled: true,
+    },
+    cols: 12,
+    isOpen: true,
+  },
+  {
+    name: "Measurement Site",
     key: "map_display_name",
     required: true,
     type: CRUD_FIELD_TYPES.TEXT,
@@ -137,7 +133,7 @@ export const fields = [
     isOpen: true,
   },
   {
-    name: "Measure Units",
+    name: "Staff Gage Units",
     key: "measure_units",
     required: true,
     type: CRUD_FIELD_TYPES.TEXT,
@@ -148,7 +144,7 @@ export const fields = [
     isOpen: true,
   },
   {
-    name: "New Value",
+    name: "Staff Gage Reading",
     key: "de_new_value",
     required: true,
     type: CRUD_FIELD_TYPES.NUMBER,
@@ -156,12 +152,21 @@ export const fields = [
     isOpen: true,
   },
   {
-    name: "New Value Comments",
+    name: "Notes",
     key: "de_new_value_comments",
     required: true,
     type: CRUD_FIELD_TYPES.TEXT,
     cols: 12,
     isOpen: true,
+  },
+  {
+    name: "Reading Date/Time",
+    key: "entry_timestamp",
+    required: false,
+    type: CRUD_FIELD_TYPES.DATETIME,
+    cols: 12,
+    isOpen: true,
+    defaultValue: new Date(),
   },
 ];
 

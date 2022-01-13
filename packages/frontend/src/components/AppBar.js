@@ -13,6 +13,7 @@ import { Menu as MenuIcon } from "@material-ui/icons";
 
 import UserDropdown from "./UserDropdown";
 import ThemesToggle from "./ThemesToggle";
+import { THEME } from "../constants";
 
 const AppBar = styled(MuiAppBar)`
   background: ${(props) => props.theme.header.background};
@@ -42,6 +43,15 @@ const AppBarComponent = ({ onDrawerToggle }) => (
               </IconButton>
             </Grid>
           </Hidden>
+          <Grid
+            item
+            xs
+            style={{
+              marginLeft: JSON.parse(localStorage.getItem("isMainSidebarOpen"))
+                ? 0
+                : THEME.MAIN_SIDEBAR_WIDTH,
+            }}
+          />
           <Grid item xs />
           <Grid item>
             <ThemesToggle />

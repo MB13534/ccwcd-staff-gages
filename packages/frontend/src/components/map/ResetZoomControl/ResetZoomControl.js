@@ -7,6 +7,7 @@ class ResetZoomControl {
     this._container.className = "mapboxgl-ctrl mapboxgl-ctrl-group";
 
     const icon = document.createElement("button");
+    icon.type = "button";
     icon.className = "material-icons";
     icon.style.verticalAlign = "middle";
     icon.style.cursor = "pointer";
@@ -15,7 +16,7 @@ class ResetZoomControl {
     this._container.addEventListener("click", () => {
       map.flyTo({
         center: STARTING_LOCATION,
-        zoom: 11,
+        zoom: 9,
         padding: { bottom: 0 },
       });
     });

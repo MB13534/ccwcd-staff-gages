@@ -45,6 +45,12 @@ module.exports = (sequelize, DataTypes) => {
       de_new_value_comments: {
         type: TEXT,
       },
+      entry_timestamp: {
+        type: DATE,
+      },
+      structure_name: {
+        type: TEXT,
+      },
       id: {
         type: UUID,
         primaryKey: true,

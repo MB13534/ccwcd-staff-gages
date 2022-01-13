@@ -15,8 +15,11 @@ import {
   Users,
   Map,
 } from "react-feather";
+//testinggg
 
 import AuthGuard from "../components/AuthGuard";
+import DeveloperGuard from "../components/DeveloperGuard";
+import DeveloperVisibilityFilter from "../components/DeveloperVisibilityFilter";
 import AdminGuard from "../components/AdminGuard";
 import AdminVisibilityFilter from "../components/AdminVisibilityFilter";
 
@@ -31,11 +34,12 @@ import { DocumentationProvider } from "../pages/docs/DocumentationProvider";
 import * as inflector from "inflected";
 import { dasherize, underscore } from "inflected";
 import GettingStarted from "../pages/docs/GettingStarted";
-import Default from "../pages/dashboards/Default";
 import { CrudProvider } from "../CrudProvider";
 import CRUD from "../pages/docs/CRUD";
 import Deploy from "../pages/docs/Deploy";
-import MobileMap from "../pages/maps/MobileMap";
+
+// TODO MAYBE LAZY IMPORT
+import MobileMap from "../components/map/MobileMap";
 const Account = async(() => import("../pages/pages/Account"));
 const Profile = async(() => import("../pages/pages/Profile"));
 
@@ -53,10 +57,10 @@ const getSidebarMenu = (list) => {
       component: CrudIndexPage,
       config: require(`../pages/models/${item.name}Config`),
       provider: CrudProvider,
-      guard: item.guard,
-      visibilityFilter: item.visibilityFilter,
       children: item.children,
       header: item.header,
+      guard: item.guard,
+      visibilityFilter: item.visibilityFilter,
     };
   });
 };
@@ -72,8 +76,6 @@ const getCrudRoutes = (list) => {
       model: inflector.singularize(item.name),
       component: CrudIndexPage,
       provider: CrudProvider,
-      guard: item.guard,
-      visibilityFilter: item.visibilityFilter,
       config,
       crud: [
         {
@@ -82,8 +84,6 @@ const getCrudRoutes = (list) => {
           component: CrudViewPage,
           provider: CrudProvider,
           model: inflector.singularize(item.name),
-          guard: item.guard,
-          visibilityFilter: item.visibilityFilter,
           config,
         },
         {
@@ -92,8 +92,6 @@ const getCrudRoutes = (list) => {
           component: CrudViewPage,
           provider: CrudProvider,
           model: inflector.singularize(item.name),
-          guard: item.guard,
-          visibilityFilter: item.visibilityFilter,
           config,
         },
       ],
@@ -103,6 +101,17 @@ const getCrudRoutes = (list) => {
 
 const crudSidebarMenu = [...getSidebarMenu(CRUD_MODELS)];
 const modelCrudRoutes = [...getCrudRoutes(CRUD_MODELS)];
+
+const publicMapRoutes = {
+  header: "Mobile Access",
+  id: "Map",
+  icon: <Map />,
+  path: ROUTES.MOBILE_MAP,
+  name: "Map",
+  component: MobileMap,
+  guard: AdminGuard,
+  visibilityFilter: AdminVisibilityFilter,
+};
 
 const accountRoutes = {
   id: "Account",
@@ -126,6 +135,7 @@ const accountRoutes = {
       },
     },
   ],
+  guard: AuthGuard,
 };
 
 const landingRoutes = {
@@ -137,22 +147,15 @@ const landingRoutes = {
   children: null,
 };
 
-const mapRoutes = {
-  header: "Mobile",
-  id: "Map",
-  icon: <Map />,
-  path: "/mobile-map",
-  name: "Map",
-  component: MobileMap,
-};
-
 const mainRoutes = {
   id: "Dashboard",
   path: "/dashboard",
   icon: <Home />,
-  component: Default,
+  component: Blank,
   children: null,
   containsHome: true,
+  guard: AuthGuard,
+  visibilityFilter: AdminVisibilityFilter,
 };
 
 const pageRoutes = {
@@ -164,7 +167,7 @@ const pageRoutes = {
     {
       path: "/dashboard/default",
       name: "Dashboard",
-      component: Default,
+      component: Blank,
     },
     {
       path: ROUTES.PAGE_ABOUT,
@@ -199,31 +202,26 @@ const documentationRoutes = {
       path: ROUTES.PAGE_DOCS_INTRODUCTION,
       name: "Introduction",
       component: Introduction,
-      guard: AdminGuard,
     },
     {
       path: ROUTES.PAGE_DOCS_GETTING_STARTED,
       name: "Getting Started",
       component: GettingStarted,
-      guard: AdminGuard,
     },
     {
       path: ROUTES.PAGE_DOCS_CRUD,
       name: "CRUD",
       component: CRUD,
-      guard: AdminGuard,
     },
     {
       path: ROUTES.PAGE_DOCS_DEPLOY,
       name: "Deploy",
       component: Deploy,
-      guard: AdminGuard,
     },
     {
       path: ROUTES.PAGE_DOCS_SUPPORT,
       name: "Support",
       component: Support,
-      guard: AdminGuard,
     },
     {
       path: ROUTES.PAGE_CHANGELOG,
@@ -232,8 +230,8 @@ const documentationRoutes = {
     },
   ],
   component: null,
-  guard: AdminGuard,
-  visibilityFilter: AdminVisibilityFilter,
+  guard: DeveloperGuard,
+  visibilityFilter: DeveloperVisibilityFilter,
 };
 
 const slugify = (str) => {
@@ -258,7 +256,8 @@ const componentsRoutes = {
     })),
   ],
   component: null,
-  visibilityFilter: AdminVisibilityFilter,
+  guard: DeveloperGuard,
+  visibilityFilter: DeveloperVisibilityFilter,
 };
 
 const changelogRoutes = {
@@ -272,6 +271,7 @@ const changelogRoutes = {
 };
 
 // This route is only visible while signed in
+//it also routes to the login page
 const protectedPageRoutes = {
   id: "Private",
   path: "/private",
@@ -304,8 +304,8 @@ const adminRoutes = {
       component: Blank,
     },
   ],
-  guard: AdminGuard,
-  visibilityFilter: AdminVisibilityFilter,
+  guard: DeveloperGuard,
+  visibilityFilter: DeveloperVisibilityFilter,
 };
 
 // Routes using the Dashboard layout
@@ -322,13 +322,17 @@ export const dashboardLayoutRoutes = [
 export const dashboardMaxContentLayoutRoutes = [
   ...crudSidebarMenu,
   ...modelCrudRoutes,
+  publicMapRoutes,
 ];
 
 // Routes using the Auth layout
 export const authLayoutRoutes = [accountRoutes];
 
 // Routes using the Presentation layout
-export const presentationLayoutRoutes = [landingRoutes, mapRoutes];
+export const presentationLayoutRoutes = [landingRoutes];
+
+// Routes using the full screen map layout
+export const fullscreenMapRoutes = [];
 
 // Routes that are protected
 export const protectedRoutes = [protectedPageRoutes];
@@ -337,7 +341,7 @@ export const protectedRoutes = [protectedPageRoutes];
 export const sidebarRoutes = [
   mainRoutes,
   ...crudSidebarMenu,
-  mapRoutes,
+  publicMapRoutes,
   adminRoutes,
   componentsRoutes,
   documentationRoutes,

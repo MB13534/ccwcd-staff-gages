@@ -4,12 +4,10 @@ import { darken, rgba } from "polished";
 import { NavLink, withRouter } from "react-router-dom";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "../vendor/perfect-scrollbar.css";
-import { spacing } from "@material-ui/system";
 
 import {
   Avatar,
   Badge,
-  Box as MuiBox,
   Chip,
   Collapse,
   Drawer as MuiDrawer,
@@ -26,8 +24,6 @@ import { sidebarRoutes as routes } from "../routes/index";
 import { useAuth0 } from "@auth0/auth0-react";
 import UserDropdown from "./UserDropdown";
 import { customSecondary } from "../theme/variants";
-
-const Box = styled(MuiBox)(spacing);
 
 const Drawer = styled(MuiDrawer)`
   border-right: 0;
@@ -269,7 +265,7 @@ const SidebarCategory = ({
   );
 };
 
-const SidebarLink = ({ name, to, badge, icon }) => {
+const SidebarLink = ({ name, to, badge }) => {
   return (
     <Link
       button
@@ -327,17 +323,16 @@ const Sidebar = ({
         button
         style={{
           pointerEvents: "all",
+          // display: "flex",
+          // justifyContent: "center",
         }}
       >
         <BrandIcon
-          src={`/static/img/lrewater-logo-square.svg`}
-          width="32"
-          height="32"
-          alt="LRE Icon"
-        />{" "}
-        <Box ml={1} style={{ display: "flex" }}>
-          Unified Platform{" "}
-        </Box>
+          src={`/static/img/ccwcd-logo-full.png`}
+          width="150"
+          height="48"
+          alt="Clearwater Icon"
+        />
       </Brand>
       <Scrollbar
         style={{
@@ -374,17 +369,37 @@ const Sidebar = ({
                           timeout="auto"
                           unmountOnExit
                         >
-                          {category.children.map((route, index) => (
-                            <SidebarLink
-                              key={index}
-                              name={route.name}
-                              to={route.path}
-                              icon={route.icon}
-                              badge={route.badge}
-                            />
-                          ))}
+                          {category.children.map((route, index) => {
+                            const VisibilityFilter =
+                              route.visibilityFilter || React.Fragment;
+                            return (
+                              <VisibilityFilter key={index}>
+                                <SidebarLink
+                                  key={index}
+                                  name={route.name}
+                                  to={route.path}
+                                  icon={route.icon}
+                                  badge={route.badge}
+                                />
+                              </VisibilityFilter>
+                            );
+                          })}
                         </Collapse>
                       </React.Fragment>
+                    ) : category.link === "external" ? (
+                      <SidebarCategory
+                        isCollapsable={false}
+                        name={category.id}
+                        to={category.path}
+                        activeClassName="active"
+                        component={NavLink}
+                        icon={category.icon}
+                        exact
+                        button
+                        badge={category.badge}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      />
                     ) : category.icon ? (
                       <SidebarCategory
                         isCollapsable={false}
@@ -423,14 +438,12 @@ const Sidebar = ({
                   }}
                   variant="dot"
                 >
-                  <Avatar alt={user.nickname} src={user.picture} />
+                  <Avatar alt={user.name} src={user.picture} />
                 </SidebarFooterBadge>
               </UserDropdown>
             </Grid>
             <Grid item>
-              <SidebarFooterText variant="body2">
-                {user.nickname}
-              </SidebarFooterText>
+              <SidebarFooterText variant="body2">{user.name}</SidebarFooterText>
               <SidebarFooterSubText variant="caption">
                 {user.email}
               </SidebarFooterSubText>

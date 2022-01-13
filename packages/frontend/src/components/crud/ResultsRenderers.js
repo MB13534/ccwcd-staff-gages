@@ -16,6 +16,7 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { Visibility } from "@material-ui/icons";
 import Divider from "@material-ui/core/Divider";
+import { useApp } from "../../AppProvider";
 
 const Chip = styled(MuiChip)`
   &.MuiChip-root {
@@ -321,13 +322,52 @@ export function StatusDotRenderer(
   );
 }
 
+export const FormatBooleanTrueFalse = (params) => {
+  // if (typeof params.value !== "boolean") {
+  //   return <span>{params.value}</span>;
+  // }
+  if (params.value) {
+    return <span>yes</span>;
+  }
+  return <span>no</span>;
+};
+
+export const DropdownValueRenderer = (params) => {
+  const { lookupTableCache } = useApp();
+
+  let returnValue = params.value;
+
+  if (
+    params.colDef.lookupModel &&
+    params.colDef.lookupKey &&
+    params.colDef.lookupValue
+  ) {
+    const cacheEntry = lookupTableCache[params.colDef.lookupModel].find(
+      (x) => x[params.colDef.lookupKey] === params.value
+    );
+
+    if (cacheEntry) returnValue = cacheEntry[params.colDef.lookupValue];
+  }
+
+  return <span>{returnValue}</span>;
+};
+// display: block;
+// line-height: 1 !important;
+export const FormatIndexFromSplitString = ({ props }, index, splitter) => {
+  if (typeof props.children !== "string") return;
+  return props.children.split(splitter)[index];
+};
+
 export const Renderers = {
   AssociatedFieldRenderer,
   IdRenderer,
   ActionsRenderer,
   StatusDotRenderer,
+  DropdownValueRenderer,
   StatusHelpIconRenderer,
+  FormatIndexFromSplitString,
   TimestampRenderer,
   ValueWithIconRenderer,
   DateRenderer,
+  FormatBooleanTrueFalse,
 };

@@ -3,7 +3,11 @@ import styled from "styled-components/macro";
 import { useHistory, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { pluralize } from "inflected";
-import { Grid, isWidthDown, withWidth } from "@material-ui/core";
+import {
+  Grid,
+  // isWidthDown,
+  withWidth,
+} from "@material-ui/core";
 import { CRUD_FORM_SUBMIT_TYPES, CRUD_VIEW_MODES } from "../../constants";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useQuery } from "react-query";
@@ -13,7 +17,7 @@ import ViewAppBar from "./ViewAppBar";
 import { useApp } from "../../AppProvider";
 import { fetchRecord } from "../../services/crudService";
 import { ViewEditor } from "./ViewEditor";
-import { ViewSidebar } from "./ViewSidebar";
+// import { ViewSidebar } from "./ViewSidebar";
 import { ConfirmDeleteDialog } from "./ConfirmDeleteDialog";
 import useDebounce from "../../hooks/useDebounce";
 import { useDev } from "../../DevProvider";
@@ -38,6 +42,7 @@ const Content = styled(Grid)`
 `;
 
 function CrudViewPage({ config, width, modelName }) {
+  const crudModelNameLabels = config.crudModelNameLabels;
   let { id } = useParams();
   const history = useHistory();
   const app = useApp();
@@ -110,16 +115,16 @@ function CrudViewPage({ config, width, modelName }) {
     await refetch();
   };
 
-  const handleVersionViewClick = (version) => {
-    if (currentVersion?.id === version.id) {
-      setCurrentVersion(null);
-    } else {
-      if (isWidthDown("xs", width)) {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-      setCurrentVersion(version);
-    }
-  };
+  // const handleVersionViewClick = (version) => {
+  //   if (currentVersion?.id === version.id) {
+  //     setCurrentVersion(null);
+  //   } else {
+  //     if (isWidthDown("xs", width)) {
+  //       window.scrollTo({ top: 0, behavior: "smooth" });
+  //     }
+  //     setCurrentVersion(version);
+  //   }
+  // };
 
   useEffect(() => {
     if (currentVersion && debouncedValueCache) {
@@ -219,7 +224,7 @@ function CrudViewPage({ config, width, modelName }) {
             startIcon={<ChevronLeft />}
             onClick={() => history.push(crud.getModelBasePath())}
           >
-            Back to {pluralize(modelName)}
+            Back to {crudModelNameLabels?.standard ?? modelName}
           </Button>
         }
       />
@@ -228,7 +233,7 @@ function CrudViewPage({ config, width, modelName }) {
 
   return (
     <div style={{ height: "100%" }}>
-      <Helmet title={pluralize(modelName)} />
+      <Helmet title={crudModelNameLabels?.standard ?? pluralize(modelName)} />
 
       <ConfirmUnsavedDialog
         modelName={modelName}
@@ -241,6 +246,9 @@ function CrudViewPage({ config, width, modelName }) {
         open={app.confirmDialogOpen}
         setOpen={app.setConfirmDialogOpen}
         config={config}
+        afterDelete={() => {
+          history.push(`${crud.getModelBasePath()}`);
+        }}
       />
 
       <ConfirmEvolveDialog
@@ -258,6 +266,7 @@ function CrudViewPage({ config, width, modelName }) {
         isFetching={isFetching}
         mode={mode}
         modelName={modelName}
+        crudModelNameLabels={crudModelNameLabels}
         submitForm={submitForm}
         submitFormMode={submitFormMode}
         setSubmitFormMode={setSubmitFormMode}
@@ -287,15 +296,15 @@ function CrudViewPage({ config, width, modelName }) {
           width={width}
         />
 
-        {mode === CRUD_VIEW_MODES.EDIT && (
-          <ViewSidebar
-            modelName={modelName}
-            data={query.data}
-            width={width}
-            currentVersion={currentVersion}
-            handleVersionViewClick={handleVersionViewClick}
-          />
-        )}
+        {/*{mode === CRUD_VIEW_MODES.EDIT && (*/}
+        {/*  <ViewSidebar*/}
+        {/*    modelName={modelName}*/}
+        {/*    data={query.data}*/}
+        {/*    width={width}*/}
+        {/*    currentVersion={currentVersion}*/}
+        {/*    handleVersionViewClick={handleVersionViewClick}*/}
+        {/*  />*/}
+        {/*)}*/}
       </Content>
     </div>
   );

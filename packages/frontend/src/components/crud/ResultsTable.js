@@ -23,8 +23,11 @@ const DataTable = styled(MuiDataGrid)`
     font-weight: ${(props) => props.theme.typography.fontWeightLight};
     font-family: ${(props) => props.theme.typography.fontFamily};
     color: ${(props) => props.theme.palette.text.secondary} !important;
-
-    .MuiDataGrid-cell,
+    .MuiDataGrid-cell
+    // {
+    //   max-height: 100% !important;
+    // }
+    ,
     .MuiDataGrid-columnsContainer {
       color: ${(props) => props.theme.palette.text.primary} !important;
       border-bottom: 1px solid
@@ -59,26 +62,25 @@ const DataTable = styled(MuiDataGrid)`
 
   .MuiDataGrid-row {
     cursor: pointer;
+    // max-height: 100%;
   }
 `;
 
 export function ResultsTable({
   configColumns,
+  sortBy = {
+    field: "",
+    sort: "",
+  },
   modelName,
   data,
   endpoint,
   width,
 }) {
   const history = useHistory();
-
   const [columns] = useState(configColumns(modelName));
   const [pageSize] = useState(isWidthDown("xs", width) ? 5 : 25);
-  const [sortModel, setSortModel] = useState([
-    {
-      field: "created_at",
-      sort: "asc",
-    },
-  ]);
+  const [sortModel, setSortModel] = useState([sortBy]);
 
   const onRowClick = (params) => {
     if (actionsPopupIsOpen()) return;

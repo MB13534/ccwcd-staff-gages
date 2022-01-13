@@ -7,7 +7,6 @@ const GlobalStyle = createGlobalStyle`
   html,
   body,
   #root {
-    position: fixed;
     height: 100%;
     overflow-x: hidden;
   }
@@ -15,7 +14,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     background: ${(props) => props.theme.palette.background.default};
   }
-
+  
   *::-webkit-scrollbar {
     width: 16px;
     height: 16px;

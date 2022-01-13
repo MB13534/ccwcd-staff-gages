@@ -1,52 +1,54 @@
 import React from "react";
 import styled from "styled-components/macro";
 import { spacing } from "@material-ui/system";
-import { Link } from "react-router-dom";
-import { ROUTES } from "../../../constants";
+import { useAuth0 } from "@auth0/auth0-react";
 import {
   AppBar,
-  Box,
   Button as MuiButton,
   Container,
   Grid,
   isWidthDown,
   Toolbar,
+  Tooltip,
   withWidth,
 } from "@material-ui/core";
 
 import ThemesToggle from "../../../components/ThemesToggle";
+import { ROUTES } from "../../../constants";
+import Link from "@material-ui/core/Link";
 
 const Button = styled(MuiButton)(spacing);
 
-const Brand = styled.div`
-  font-size: ${(props) => props.theme.typography.h5.fontSize};
-  font-weight: ${(props) => props.theme.typography.fontWeightMedium};
-  font-family: ${(props) => props.theme.typography.fontFamily};
-`;
-
 const BrandIcon = styled.img`
   margin-right: ${(props) => props.theme.spacing(2)}px;
+  display: flex;
+  align-items: center;
 `;
 
 function AppBarComponent({ width }) {
+  const { loginWithRedirect } = useAuth0();
   return (
     <AppBar position="absolute" color="transparent" elevation={0}>
       <Toolbar>
         <Container>
           <Grid container alignItems="center">
             <Grid item>
-              <Brand style={{ display: "flex", alignItems: "center" }}>
-                <BrandIcon
-                  src={`/static/img/lrewater-logo-square.svg`}
-                  width="32"
-                  height="32"
-                  alt="LRE Icon"
-                />{" "}
-                <Box ml={1} style={{ display: "flex" }}>
-                  Unified Platform{" "}
-                </Box>
-              </Brand>
+              <Link
+                href="https://lrewater.com"
+                target="_blank"
+                rel="noreferrer noopener"
+              >
+                <Tooltip title="Built by LRE Water">
+                  <BrandIcon
+                    src={`/static/img/lrewater-logo-simple.svg`}
+                    width={isWidthDown("xs", width) ? "125" : "150"}
+                    height={isWidthDown("xs", width) ? "40" : "48"}
+                    alt={"LREWater.com"}
+                  />
+                </Tooltip>
+              </Link>
             </Grid>
+
             <Grid item xs />
             <Grid item>
               <ThemesToggle />
@@ -54,10 +56,13 @@ function AppBarComponent({ width }) {
                 ml={2}
                 color="primary"
                 variant="contained"
-                component={Link}
-                to={ROUTES.PAGE_DASHBOARD}
+                onClick={() =>
+                  loginWithRedirect({
+                    appState: { returnTo: ROUTES.PAGE_DASHBOARD },
+                  })
+                }
               >
-                Launch{isWidthDown("xs", width) ? "" : " Dashboard"}
+                {isWidthDown("xs", width) ? "Login" : "Log in to Dashboard"}
               </Button>
             </Grid>
           </Grid>

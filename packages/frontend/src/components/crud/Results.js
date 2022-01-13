@@ -24,8 +24,14 @@ const Root = styled(Grid)`
   }
 `;
 
-function Results({ config, modelName, width, displayMode }) {
-  const app = useApp();
+function Results({
+  config,
+  modelName,
+  width,
+  displayMode,
+  crudModelNameLabels,
+}) {
+  const { doToast, lookupTableCache } = useApp();
   const dev = useDev();
   const service = useService({ toast: false });
   const endpoint = inflector.dasherize(
@@ -41,13 +47,13 @@ function Results({ config, modelName, width, displayMode }) {
         return { data: result };
       } catch (err) {
         console.error(err);
-        app.doToast("error", err);
+        doToast("error", err);
       }
     },
     { keepPreviousData: true }
   );
 
-  if (isLoading) return <Loader />;
+  if (isLoading || lookupTableCache?.length === 0) return <Loader />;
 
   if (error) return "An error has occurred: " + error.message;
 
@@ -59,7 +65,11 @@ function Results({ config, modelName, width, displayMode }) {
             title="No Records Found"
             subtitle="There were no results for your query."
             actions={
-              <CreateModelButton fullWidth={false} modelName={modelName} />
+              <CreateModelButton
+                fullWidth={false}
+                crudModelNameLabels={crudModelNameLabels}
+                modelName={modelName}
+              />
             }
           />
         )}
@@ -68,6 +78,7 @@ function Results({ config, modelName, width, displayMode }) {
             {displayMode === CRUD_DISPLAY_MODES.TABLE && (
               <ResultsTable
                 configColumns={config.columns}
+                sortBy={config.sortBy}
                 modelName={modelName}
                 data={data.data}
                 endpoint={endpoint}

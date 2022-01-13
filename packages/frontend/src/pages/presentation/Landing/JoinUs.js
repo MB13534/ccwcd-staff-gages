@@ -9,10 +9,12 @@ import {
 } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
-import { Link } from "react-router-dom";
 import { ROUTES } from "../../../constants";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const Spacer = styled.div(spacing);
+
+const SpanSpacer = styled.span(spacing);
 
 const Typography = styled(MuiTypography)(spacing);
 
@@ -32,28 +34,34 @@ const Subtitle = styled(Typography)`
 `;
 
 function JoinUs() {
+  const { loginWithRedirect } = useAuth0();
   return (
     <Wrapper pt={16} pb={16}>
       <Container>
         <Grid container alignItems="center" justify="center">
           <Grid item xs={12} md={6} lg={6} xl={6}>
             <Typography variant="h2" gutterBottom>
-              Check It Out
+              Access the Platform
             </Typography>
             <Subtitle variant="h5" gutterBottom>
-              LRE Water Unified Platform is fast, extendable and fully
-              customizable.
+              Log in with user profile:
             </Subtitle>
             <Spacer mb={4} />
 
             <Button
               color="primary"
               variant="contained"
-              component={Link}
-              to={ROUTES.PAGE_DASHBOARD}
+              onClick={() =>
+                loginWithRedirect({
+                  appState: { returnTo: ROUTES.PAGE_DASHBOARD },
+                })
+              }
             >
-              Launch Dashboard
+              Log in to Dashboard
             </Button>
+            <SpanSpacer ml={4} />
+
+            {/*<Spacer mb={10} />*/}
           </Grid>
         </Grid>
       </Container>

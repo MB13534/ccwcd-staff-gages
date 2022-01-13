@@ -87,7 +87,7 @@ function UserDropdown({ children }) {
   const [anchorMenu, setAnchorMenu] = useState(null);
   const { user, isLoading, isAuthenticated, logout } = useAuth0();
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isDeveloper, setIsDeveloper] = useState(false);
 
   const toggleMenu = (event) => {
     setAnchorMenu(event.currentTarget);
@@ -99,10 +99,8 @@ function UserDropdown({ children }) {
 
   useEffect(() => {
     if (user) {
-      setIsAdmin(
-        user[`${process.env.REACT_APP_AUDIENCE}/roles`].includes(
-          "Administrator"
-        )
+      setIsDeveloper(
+        user[`${process.env.REACT_APP_AUDIENCE}/roles`].includes("Developer")
       );
     }
   }, [user]);
@@ -127,7 +125,7 @@ function UserDropdown({ children }) {
               }}
               variant="dot"
             >
-              <TinyAvatar alt={user.nickname} src={user.picture} />
+              <TinyAvatar alt={user.name} src={user.picture} />
             </TinyUserAvatarBadge>
           </IconButton>
         </Tooltip>
@@ -152,10 +150,10 @@ function UserDropdown({ children }) {
                 }}
                 variant="dot"
               >
-                <Avatar alt={user.nickname} src={user.picture} />
+                <Avatar alt={user.name} src={user.picture} />
               </UserAvatarBadge>
             }
-            title={user.nickname}
+            title={user.name}
             subheader={user.email}
             onClick={() => {
               history.push(ROUTES.USER_PROFILE);
@@ -172,7 +170,7 @@ function UserDropdown({ children }) {
         >
           About LRE Water Unified Platform
         </MenuItem>
-        {isAdmin && (
+        {isDeveloper && (
           <MenuItem
             onClick={() => {
               history.push(ROUTES.PAGE_DOCUMENTATION);
