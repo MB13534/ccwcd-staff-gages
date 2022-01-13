@@ -71,7 +71,7 @@ function StaffGageReadings() {
   const {
     data: unfilteredData,
     isLoading,
-    error,
+    // error,
   } = useQuery(
     ["DataStaffGageReadings"],
     async () => {
