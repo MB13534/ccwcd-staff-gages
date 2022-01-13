@@ -89,7 +89,6 @@ function StaffGageReadings() {
   );
 
   useEffect(() => {
-    console.log("filter");
     const filterData = filterDataByDateFilters(unfilteredData);
     setFilteredData(filterData);
   }, [filterValues, unfilteredData]); //eslint-disable-line
@@ -106,7 +105,7 @@ function StaffGageReadings() {
     { keepPreviousData: true }
   );
 
-  const formattedStructures = useMemo(() => {
+  const formattedStations = useMemo(() => {
     let converted = {};
     if (Stations?.length > 0) {
       Stations.forEach((d) => {
@@ -120,7 +119,7 @@ function StaffGageReadings() {
     {
       title: "Station",
       field: "station_ndx",
-      lookup: formattedStructures,
+      lookup: formattedStations,
     },
     {
       title: "Collected",

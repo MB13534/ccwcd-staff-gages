@@ -10,11 +10,7 @@ import MapboxglSpiderifier from "mapboxgl-spiderifier";
 import { STARTING_LOCATION } from "../../constants";
 import ResetZoomControl from "../../components/map/ResetZoomControl";
 // import LayersControl from "../../components/map/LayersControl";
-// import { Search as SearchIcon } from "react-feather";
-import {
-  // InputBase,
-  Tooltip,
-} from "@material-ui/core";
+import { Tooltip } from "@material-ui/core";
 // import LineChart from "../dashboards/Default/LineChart";
 import { findRawRecords } from "../../services/crudService";
 import { useQuery } from "react-query";
@@ -25,6 +21,7 @@ import "./styles.css";
 import debounce from "lodash.debounce";
 import ToggleBasemapControl from "./ToggleBasemapControl";
 import { lineColors } from "../../utils";
+import Search from "./components/search";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -70,50 +67,6 @@ const WellName = styled.div`
   text-align: center;
 `;
 
-// const Search = styled.div`
-//   border-radius: 10px;
-//   background-color: rgba(255, 255, 255, 0.5);
-//   position: absolute;
-//   top: 7px;
-//   left: 60px;
-//   width: calc(100% - 120px);
-//   z-index: 10000;
-//   &:hover {
-//     background-color: white;
-//   }
-// `;
-
-// const SearchIconWrapper = styled.div`
-//   width: 50px;
-//   height: 100%;
-//   position: absolute;
-//   pointer-events: none;
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-//   svg {
-//     width: 22px;
-//     height: 22px;
-//     stroke: ${(props) => props.theme.header.search.color};
-//     stroke-width: 2;
-//     stroke-linecap: round;
-//     stroke-linejoin: round;
-//     fill: none;
-//   }
-// `;
-//
-// const Input = styled(InputBase)`
-//   color: inherit;
-//   width: 100%;
-//   > input {
-//     color: ${(props) => props.theme.header.search.color};
-//     padding-top: ${(props) => props.theme.spacing(2.5)}px;
-//     padding-right: ${(props) => props.theme.spacing(2.5)}px;
-//     padding-bottom: ${(props) => props.theme.spacing(2.5)}px;
-//     padding-left: ${(props) => props.theme.spacing(12)}px;
-//     width: 100%;
-//   }
-// `;
 //
 // const GraphContainer = styled.div`
 //   height: 40%;
@@ -310,7 +263,7 @@ function MobileMap() {
       zoom: 11,
     });
 
-    //top left controls
+    //top right controls
     //loop through each base layer and add a layer toggle for that layer
     DUMMY_BASEMAP_LAYERS.forEach((layer) => {
       return map.addControl(
@@ -318,8 +271,6 @@ function MobileMap() {
         "top-right"
       );
     });
-
-    //top right controls
     map.addControl(
       new mapboxgl.GeolocateControl({
         positionOptions: {
@@ -330,10 +281,10 @@ function MobileMap() {
         // Draw an arrow next to the location dot to indicate which direction the device is heading.
         showUserHeading: true,
       }),
-      "top-left"
+      "top-right"
     );
     // Add locate control to the map.
-    map.addControl(new ResetZoomControl(), "top-left");
+    map.addControl(new ResetZoomControl(), "top-right");
 
     map.on("load", () => {
       setMapIsLoaded(true);
@@ -625,7 +576,7 @@ function MobileMap() {
               e.features[0].properties.map_lon_dd,
               e.features[0].properties.map_lat_dd,
             ],
-            zoom: 14,
+            zoom: 18,
             // padding: { bottom: 400 },
           });
         });
@@ -740,19 +691,19 @@ function MobileMap() {
   //   }
   // }, [currentGraphType]); // eslint-disable-line
 
+  const handleSearchSelect = (result) => {
+    map.fire("closeAllPopups");
+    map.flyTo({ center: [result?.map_lon_dd, result?.map_lat_dd], zoom: 18 });
+  };
+
   if (error) return "An error has occurred: " + error.message;
 
   return (
     <React.Fragment>
       <Helmet title="Mobile Map" />
 
-      {/*<Search>*/}
-      {/*  <SearchIconWrapper>*/}
-      {/*    <SearchIcon />*/}
-      {/*  </SearchIconWrapper>*/}
-      {/*  <Input fullWidth placeholder="Search" />*/}
-      {/*</Search>*/}
       <MapContainer ref={mapContainerRef} id="map">
+        <Search onSelect={handleSearchSelect} />
         <Coordinates ref={coordinatesRef}>
           <strong>
             <WellName ref={wellNameRef} />
