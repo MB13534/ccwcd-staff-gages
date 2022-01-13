@@ -14,6 +14,7 @@ import {
   Monitor,
   Users,
   Map,
+  Share2,
 } from "react-feather";
 //testinggg
 
@@ -40,6 +41,7 @@ import Deploy from "../pages/docs/Deploy";
 
 // TODO MAYBE LAZY IMPORT
 import MobileMap from "../components/map/MobileMap";
+import StaffGageReadings from "../pages/dashboards/data entry/StaffGageReadings";
 const Account = async(() => import("../pages/pages/Account"));
 const Profile = async(() => import("../pages/pages/Profile"));
 
@@ -109,6 +111,22 @@ const publicMapRoutes = {
   path: ROUTES.MOBILE_MAP,
   name: "Map",
   component: MobileMap,
+  guard: AdminGuard,
+  visibilityFilter: AdminVisibilityFilter,
+};
+
+const dataEntryRoutes = {
+  header: "Data Access",
+  id: "Data Entry",
+  icon: <Share2 />,
+  children: [
+    {
+      path: "/data-access/staff-gage-readings",
+      name: "Staff Gage Readings",
+      component: StaffGageReadings,
+      guard: AdminGuard,
+    },
+  ],
   guard: AdminGuard,
   visibilityFilter: AdminVisibilityFilter,
 };
@@ -317,6 +335,7 @@ export const dashboardLayoutRoutes = [
   documentationRoutes,
   componentsRoutes,
   adminRoutes,
+  dataEntryRoutes,
 ];
 
 export const dashboardMaxContentLayoutRoutes = [
@@ -341,6 +360,7 @@ export const protectedRoutes = [protectedPageRoutes];
 export const sidebarRoutes = [
   mainRoutes,
   ...crudSidebarMenu,
+  dataEntryRoutes,
   publicMapRoutes,
   adminRoutes,
   componentsRoutes,

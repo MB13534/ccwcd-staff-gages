@@ -189,6 +189,8 @@ export const lastOfYear = new Date(new Date().getFullYear(), 11, 31);
 
 export const oneYearAgo = add(new Date(), { years: -1 });
 
+export const threeMonthsAgo = add(new Date(), { months: -3 });
+
 export const filterDataForWellOwner = (data, user) => {
   return data
     ? data.filter((item) => item.authorized_users?.includes(user?.sub))

@@ -24,7 +24,7 @@ const DataAdminTable = ({
   label,
   data,
   pageSize = 10,
-  isLoading = false,
+  isLoading = true,
   height,
   actions = [],
   updateHandler,
@@ -34,21 +34,19 @@ const DataAdminTable = ({
   // options = {},
   // components = {},
 }) => {
-  const { doToast, currentUser } = useApp();
+  const { doToast } = useApp();
   const { getAccessTokenSilently } = useAuth0();
-
-  const userAuthorizedToEdit = currentUser.isAdmin || currentUser.isDeveloper;
 
   const [selectedRow, setSelectedRow] = useState(null);
 
   const handleAdd = (newData) => {
-    newData["cuwcd_well_number"] = data[0].cuwcd_well_number;
-    if (
-      newData.production_gallons === null ||
-      isNaN(newData.production_gallons)
-    ) {
-      newData.production_gallons = 0;
-    }
+    // newData["cuwcd_well_number"] = data[0].cuwcd_well_number;
+    // if (
+    //   newData.production_gallons === null ||
+    //   isNaN(newData.production_gallons)
+    // ) {
+    //   newData.production_gallons = 0;
+    // }
 
     return (async () => {
       try {
@@ -76,19 +74,19 @@ const DataAdminTable = ({
   };
 
   const handleUpdate = (newData, oldData) => {
-    if (
-      newData.production_gallons === null ||
-      isNaN(newData.production_gallons)
-    ) {
-      newData.production_gallons = 0;
-    }
+    // if (
+    //   newData.production_gallons === null ||
+    //   isNaN(newData.production_gallons)
+    // ) {
+    //   newData.production_gallons = 0;
+    // }
     return (async () => {
       try {
         if (oldData) {
           const token = await getAccessTokenSilently();
           const headers = { Authorization: `Bearer ${token}` };
           await axios.put(
-            `${process.env.REACT_APP_ENDPOINT}/api/${endpoint}/${newData.ndx}`,
+            `${process.env.REACT_APP_ENDPOINT}/api/${endpoint}/${newData.data_ndx}`,
             newData,
             { headers }
           );
@@ -117,7 +115,7 @@ const DataAdminTable = ({
           const token = await getAccessTokenSilently();
           const headers = { Authorization: `Bearer ${token}` };
           await axios.delete(
-            `${process.env.REACT_APP_ENDPOINT}/api/${endpoint}/${oldData.ndx}`,
+            `${process.env.REACT_APP_ENDPOINT}/api/${endpoint}/${oldData.data_ndx}`,
             { headers }
           );
           updateHandler((prevState) => {
@@ -152,9 +150,7 @@ const DataAdminTable = ({
         }}
         editable={{
           onRowAdd: handleAdd,
-          isEditHidden: () => !userAuthorizedToEdit,
           onRowUpdate: handleUpdate,
-          isDeleteHidden: () => !userAuthorizedToEdit,
           onRowDelete: handleDelete,
         }}
         components={{
@@ -179,6 +175,7 @@ const DataAdminTable = ({
           ...actions,
         ]}
         options={{
+          tableLayout: "auto",
           emptyRowsWhenPaging: false,
           columnsButton: true,
           exportButton: true,

@@ -41,7 +41,7 @@ mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const MapContainer = styled.div`
   position: relative;
   width: 100%;
-  height: calc(100vh - 64px - 62px);
+  height: calc(100vh - 57px - 61px);
 `;
 
 const Coordinates = styled.pre`
