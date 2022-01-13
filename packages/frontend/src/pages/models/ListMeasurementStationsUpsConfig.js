@@ -154,7 +154,7 @@ export const fields = [
   {
     name: "Notes",
     key: "de_new_value_comments",
-    required: true,
+    required: false,
     type: CRUD_FIELD_TYPES.TEXT,
     cols: 12,
     isOpen: true,

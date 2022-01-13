@@ -331,7 +331,7 @@ const Sidebar = ({
           src={`/static/img/ccwcd-logo-full.png`}
           width="150"
           height="48"
-          alt="Clearwater Icon"
+          alt="CCWCD Icon"
         />
       </Brand>
       <Scrollbar

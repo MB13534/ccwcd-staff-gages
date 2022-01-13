@@ -96,10 +96,11 @@ export function RightDrawer() {
           }}
         >
           <BrandIcon
+            //TODO get a square logo
             src={`/static/img/clearwater-logo-square.png`}
             width="40"
             height="40"
-            alt="Clearwater Icon"
+            alt="CCWCD Icon"
           />
           Graph Options
         </Brand>

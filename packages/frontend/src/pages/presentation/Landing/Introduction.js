@@ -66,7 +66,7 @@ function Introduction() {
               >
                 <BrandLogo
                   src="/static/img/ccwcd-logo-full.png"
-                  alt="Clearwater Logo"
+                  alt="CCWCD Logo"
                 />
               </Link>
               <Grid container justify="center" spacing={4}>
