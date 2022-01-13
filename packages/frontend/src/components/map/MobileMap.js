@@ -23,6 +23,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import "./styles.css";
 import debounce from "lodash.debounce";
+import ToggleBasemapControl from "./ToggleBasemapControl";
+import { lineColors } from "../../utils";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -233,6 +235,12 @@ function MobileMap() {
   const wellNameRef = useRef(null);
   const SPIDERFY_FROM_ZOOM = 15;
 
+  const DUMMY_BASEMAP_LAYERS = [
+    { url: "satellite-streets-v11", icon: "satellite_alt" },
+    { url: "streets-v11", icon: "commute" },
+    // { url: "outdoors-v11", icon: "park" },
+  ];
+
   // const [flowTransition, setFlowTransition] = useState("100%");
   // const handleFlowClick = () => {
   //   setFlowTransition((state) => (state === "100%" ? "0%" : "100%"));
@@ -297,11 +305,21 @@ function MobileMap() {
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: "map",
-      style: "mapbox://styles/mapbox/streets-v11",
+      style: "mapbox://styles/mapbox/" + DUMMY_BASEMAP_LAYERS[0].url,
       center: STARTING_LOCATION,
       zoom: 11,
     });
 
+    //top left controls
+    //loop through each base layer and add a layer toggle for that layer
+    DUMMY_BASEMAP_LAYERS.forEach((layer) => {
+      return map.addControl(
+        new ToggleBasemapControl(layer.url, layer.icon),
+        "top-right"
+      );
+    });
+
+    //top right controls
     map.addControl(
       new mapboxgl.GeolocateControl({
         positionOptions: {
@@ -312,19 +330,17 @@ function MobileMap() {
         // Draw an arrow next to the location dot to indicate which direction the device is heading.
         showUserHeading: true,
       }),
-      "top-right"
+      "top-left"
     );
-
     // Add locate control to the map.
-    map.addControl(new ResetZoomControl(), "top-right");
-    // map.addControl(new LayersControl(), "top-left");
+    map.addControl(new ResetZoomControl(), "top-left");
 
     map.on("load", () => {
       setMapIsLoaded(true);
       setMap(map);
       // setSpiderifier(spiderifier);
     });
-  }, []);
+  }, []); //eslint-disable-line
 
   //resizes map when mapContainerRef dimensions changes (sidebar toggle)
   useEffect(() => {
@@ -373,8 +389,8 @@ function MobileMap() {
           "</tbody></table></div>";
 
         pinElem.style.backgroundColor = feature["Last Value"]
-          ? "#74E0FF"
-          : "#8D9093";
+          ? lineColors.lightBlue
+          : lineColors.gray;
 
         if (feature.station_ndx === currentlyPaintedPointRef.current) {
           pinElem.classList.add(classes.selected);
@@ -467,8 +483,8 @@ function MobileMap() {
             "circle-color": [
               "case",
               ["boolean", ["to-boolean", ["get", "Last Value"]], false],
-              "#74E0FF",
-              "#8D9093",
+              lineColors.lightBlue,
+              lineColors.gray,
             ],
             "circle-radius": 10,
             "circle-stroke-width": [
@@ -480,7 +496,7 @@ function MobileMap() {
             "circle-stroke-color": [
               "case",
               ["boolean", ["feature-state", "clicked"], false],
-              "yellow",
+              lineColors.yellow,
               "black",
             ],
           },

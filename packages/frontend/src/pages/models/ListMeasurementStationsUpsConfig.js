@@ -9,6 +9,11 @@ export const crudModelNameLabels = {
   standard: "Measurement Station",
 };
 
+export const sortBy = {
+  field: "map_display_name",
+  sort: "asc",
+};
+
 export function columns(modelName) {
   return [
     {
@@ -26,19 +31,14 @@ export function columns(modelName) {
       },
     },
     {
-      field: "station_ndx",
-      headerName: "Station Index",
-      width: 180,
+      field: "structure_name",
+      headerName: "Structure",
+      width: 150,
     },
     {
       field: "map_display_name",
       headerName: "Measurement Site",
       width: 220,
-    },
-    {
-      field: "measure_type",
-      headerName: "Measure Type",
-      width: 200,
     },
     {
       field: "measure_units",
@@ -53,58 +53,8 @@ export function columns(modelName) {
     {
       field: "last_report",
       headerName: "Last Report",
-      width: 160,
-    },
-    {
-      field: "map_lon_dd",
-      headerName: "Longitude",
-      width: 150,
-    },
-    {
-      field: "map_lat_dd",
-      headerName: "Latitude",
-      width: 150,
-    },
-    {
-      field: "order_by",
-      headerName: "Order By",
-      width: 150,
-    },
-    {
-      field: "inactive",
-      headerName: "Inactive?",
-      width: 150,
-    },
-    {
-      field: "removed",
-      headerName: "Removed?",
-      width: 150,
-    },
-    {
-      field: "applies_to",
-      headerName: "Applies to",
-      width: 150,
-    },
-    {
-      field: "de_new_value",
-      headerName: "Staff Gage Reading",
-      width: 240,
-    },
-    {
-      field: "de_new_value_comments",
-      headerName: "Notes",
-      width: 150,
-    },
-    {
-      field: "entry_timestamp",
-      headerName: "Reading Date/Time",
-      width: 240,
+      width: 200,
       renderCell: Renderers.DateRenderer,
-    },
-    {
-      field: "structure_name",
-      headerName: "Structure",
-      width: 150,
     },
   ];
 }
