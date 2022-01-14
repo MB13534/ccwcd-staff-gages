@@ -102,6 +102,9 @@ export const fields = [
     key: "de_new_value",
     required: true,
     type: CRUD_FIELD_TYPES.NUMBER,
+    typeConfig: {
+      decimalScale: 4,
+    },
     cols: 12,
     isOpen: true,
   },

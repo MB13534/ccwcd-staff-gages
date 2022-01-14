@@ -1,35 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components/macro";
-import { NavLink } from "react-router-dom";
 
-import { Helmet } from "react-helmet-async";
-
-import {
-  Breadcrumbs as MuiBreadcrumbs,
-  Divider as MuiDivider,
-  Grid as MuiGrid,
-  Input,
-  Typography as MuiTypography,
-} from "@material-ui/core";
+import { Grid as MuiGrid, Input } from "@material-ui/core";
 
 import { spacing } from "@material-ui/system";
 
 import { useQuery } from "react-query";
 import { findRawRecords } from "../../../services/crudService";
 import useService from "../../../hooks/useService";
-import Link from "@material-ui/core/Link";
 import DataAdminTable from "../../../components/DataAdminTable";
 import Loader from "../../../components/Loader";
 import Panel from "../../../components/panels/Panel";
 import { dateFormatter, threeMonthsAgo } from "../../../utils";
 import DatePicker from "../../../components/pickers/DatePicker";
 import { add } from "date-fns";
-
-const Divider = styled(MuiDivider)(spacing);
-
-const Breadcrumbs = styled(MuiBreadcrumbs)(spacing);
-
-const Typography = styled(MuiTypography)(spacing);
 
 const TableWrapper = styled.div`
   overflow-y: auto;
@@ -166,19 +150,6 @@ function StaffGageReadings({ actions = [] }) {
 
   return (
     <React.Fragment>
-      <Helmet title="Staff Gage Readings" />
-      <Typography variant="h3" gutterBottom display="inline">
-        Staff Gage Readings
-      </Typography>
-
-      <Breadcrumbs aria-label="Breadcrumb" mt={2}>
-        <Link component={NavLink} exact to="/dashboard">
-          Dashboard
-        </Link>
-        <Typography>Staff Gage Readings</Typography>
-      </Breadcrumbs>
-
-      <Divider my={6} />
       <Panel>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>

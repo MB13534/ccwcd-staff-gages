@@ -42,6 +42,7 @@ import Deploy from "../pages/docs/Deploy";
 // TODO MAYBE LAZY IMPORT
 import MobileMap from "../components/map/MobileMap";
 import StaffGageReadings from "../pages/dashboards/data entry/StaffGageReadings";
+import StaffGageDash from "../pages/dashboards/Default/StaffGageDash";
 const Account = async(() => import("../pages/pages/Account"));
 const Profile = async(() => import("../pages/pages/Profile"));
 
@@ -169,7 +170,7 @@ const mainRoutes = {
   id: "Dashboard",
   path: "/dashboard",
   icon: <Home />,
-  component: Blank,
+  component: StaffGageDash,
   children: null,
   containsHome: true,
   guard: AuthGuard,

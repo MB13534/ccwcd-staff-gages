@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import styled from "styled-components/macro";
-import { Helmet } from "react-helmet-async";
 
 import _ from "lodash";
 
@@ -12,9 +11,6 @@ import ResetZoomControl from "../../components/map/ResetZoomControl";
 // import LayersControl from "../../components/map/LayersControl";
 import { Tooltip } from "@material-ui/core";
 // import LineChart from "../dashboards/Default/LineChart";
-import { findRawRecords } from "../../services/crudService";
-import { useQuery } from "react-query";
-import useService from "../../hooks/useService";
 import { makeStyles } from "@material-ui/core/styles";
 
 import "./styles.css";
@@ -40,7 +36,7 @@ mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const MapContainer = styled.div`
   position: relative;
   width: 100%;
-  height: calc(100vh - 57px - 61px);
+  height: 100%;
 `;
 
 const Coordinates = styled.pre`
@@ -169,14 +165,12 @@ const useStyles = makeStyles(() => ({
     borderColor: "yellow !important",
     width: "25px !important",
     height: "25px !important",
-    borderWidth: "4px !important",
+    borderWidth: "5px !important",
   },
 }));
 
-function MobileMap() {
+function MobileMap({ map, setMap, data, isLoading, error }) {
   const classes = useStyles();
-  const service = useService({ toast: false });
-  const [map, setMap] = useState();
   const [mapIsLoaded, setMapIsLoaded] = useState(false);
   // const [currentGraphType, setCurrentGraphType] = useState(null);
   // const [currentSelectedPoint, setCurrentSelectedPoint] = useState(null);
@@ -230,37 +224,13 @@ function MobileMap() {
     latRef.current.innerHTML = e.features[0].properties["map_lat_dd"];
   }
 
-  const { data, isLoading, error } = useQuery(
-    ["ListMeasurementStationsUps"],
-    async () => {
-      try {
-        const response = await service([
-          findRawRecords,
-          ["ListMeasurementStationsUps"],
-        ]);
-        //filters out any well that does not have geometry data
-        const filterData = response.filter(
-          (location) =>
-            location.applies_to.includes("staffgages") &&
-            !location.removed &&
-            !location.inactive &&
-            location.map_lon_dd &&
-            location.map_lon_dd
-        );
-        return filterData;
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    { keepPreviousData: true }
-  );
-
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: "map",
       style: "mapbox://styles/mapbox/" + DUMMY_BASEMAP_LAYERS[0].url,
       center: STARTING_LOCATION,
       zoom: 11,
+      padding: { top: 250 },
     });
 
     //top right controls
@@ -442,7 +412,7 @@ function MobileMap() {
             "circle-color": [
               "case",
               ["boolean", ["to-boolean", ["get", "Last Value"]], false],
-              lineColors.lightBlue,
+              lineColors.cyan,
               lineColors.gray,
             ],
             "circle-radius": 10,
@@ -717,8 +687,6 @@ function MobileMap() {
 
   return (
     <React.Fragment>
-      <Helmet title="Mobile Map" />
-
       <MapContainer ref={mapContainerRef} id="map">
         <Search onSelect={handleSearchSelect} />
         <Coordinates ref={coordinatesRef}>
