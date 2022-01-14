@@ -261,6 +261,7 @@ function MobileMap() {
       style: "mapbox://styles/mapbox/" + DUMMY_BASEMAP_LAYERS[0].url,
       center: STARTING_LOCATION,
       zoom: 11,
+      padding: { top: 250 },
     });
 
     //top right controls
@@ -285,6 +286,12 @@ function MobileMap() {
     );
     // Add locate control to the map.
     map.addControl(new ResetZoomControl(), "top-right");
+
+    //bottom left controls
+    map.addControl(
+      new mapboxgl.ScaleControl({ unit: "imperial" }),
+      "bottom-left"
+    );
 
     map.on("load", () => {
       setMapIsLoaded(true);
@@ -519,9 +526,13 @@ function MobileMap() {
           if (!features.length) {
             return;
           } else if (map.getZoom() < SPIDERFY_FROM_ZOOM) {
-            map.flyTo({ center: e.lngLat, zoom: map.getZoom() + 2 });
+            map.flyTo({
+              center: e.lngLat,
+              zoom: map.getZoom() + 2,
+              padding: { top: 250 },
+            });
           } else {
-            map.flyTo({ center: e.lngLat });
+            map.flyTo({ center: e.lngLat, padding: { top: 250 } });
             map
               .getSource("pins")
               .getClusterLeaves(
@@ -578,6 +589,7 @@ function MobileMap() {
             ],
             zoom: 18,
             // padding: { bottom: 400 },
+            padding: { top: 250 },
           });
         });
 
@@ -693,7 +705,11 @@ function MobileMap() {
 
   const handleSearchSelect = (result) => {
     map.fire("closeAllPopups");
-    map.flyTo({ center: [result?.map_lon_dd, result?.map_lat_dd], zoom: 18 });
+    map.flyTo({
+      center: [result?.map_lon_dd, result?.map_lat_dd],
+      zoom: 18,
+      padding: { top: 250 },
+    });
   };
 
   if (error) return "An error has occurred: " + error.message;

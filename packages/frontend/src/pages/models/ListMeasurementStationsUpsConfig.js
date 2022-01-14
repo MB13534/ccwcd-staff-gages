@@ -142,7 +142,7 @@ export const fields = [
             color={"textSecondary"}
             align="center"
           >
-            No map will be displayed
+            Map will not be displayed
           </Typography>
           <Divider mt={2} />
         </Grid>
