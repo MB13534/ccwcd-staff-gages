@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
-import CopyIcon from "@material-ui/icons/FileCopy";
-import { copyToClipboard, dateFormatter } from "../utils";
+import { dateFormatter } from "../utils";
 import MaterialTable from "material-table";
 import { useApp } from "../AppProvider";
 import { useAuth0 } from "@auth0/auth0-react";
@@ -30,6 +29,8 @@ const DataAdminTable = ({
   updateHandler,
   endpoint,
   handleRefresh = () => {},
+  columnsButton = false,
+  exportButton = false,
   // ndxField,
   // options = {},
   // components = {},
@@ -157,28 +158,28 @@ const DataAdminTable = ({
           Container: (props) => <div {...props} />,
         }}
         actions={[
-          {
-            icon: CopyIcon,
-            tooltip: "Copy Data",
-            isFreeAction: true,
-            onClick: () => {
-              try {
-                copyToClipboard(data, columns, () =>
-                  doToast("success", "Data was copied to your clipboard.")
-                );
-              } catch (error) {
-                const message = error?.message ?? "Something went wrong";
-                doToast("error", message);
-              }
-            },
-          },
+          // {
+          //   icon: CopyIcon,
+          //   tooltip: "Copy Data",
+          //   isFreeAction: true,
+          //   onClick: () => {
+          //     try {
+          //       copyToClipboard(data, columns, () =>
+          //         doToast("success", "Data was copied to your clipboard.")
+          //       );
+          //     } catch (error) {
+          //       const message = error?.message ?? "Something went wrong";
+          //       doToast("error", message);
+          //     }
+          //   },
+          // },
           ...actions,
         ]}
         options={{
           tableLayout: "auto",
           emptyRowsWhenPaging: false,
-          columnsButton: true,
-          exportButton: true,
+          columnsButton: columnsButton,
+          exportButton: exportButton,
           exportAllData: true,
           addRowPosition: "first",
           pageSize: pageSize,

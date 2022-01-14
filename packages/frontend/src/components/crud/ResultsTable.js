@@ -11,9 +11,9 @@ const DataTableWrap = styled.div`
   display: flex;
   background-color: ${(props) => props.theme.palette.background.paper};
 
-  ${(props) => props.theme.breakpoints.down("xs")} {
-    max-height: 400px;
-  }
+  // ${(props) => props.theme.breakpoints.down("xs")} {
+  //   max-height: 400px;
+  // }
 `;
 
 const DataTable = styled(MuiDataGrid)`
@@ -79,7 +79,7 @@ export function ResultsTable({
 }) {
   const history = useHistory();
   const [columns] = useState(configColumns(modelName));
-  const [pageSize] = useState(isWidthDown("xs", width) ? 5 : 25);
+  const [pageSize] = useState(isWidthDown("xs", width) ? 10 : 25);
   const [sortModel, setSortModel] = useState([sortBy]);
 
   const onRowClick = (params) => {
@@ -101,6 +101,7 @@ export function ResultsTable({
           pageSize={pageSize}
           checkboxSelection
           disableSelectionOnClick
+          rowsPerPageOptions={[10, 25, 50, 100]}
           // TODO: dkulak: Either buy MUI XGrid or roll our own (probably the latter)
           // const [selectionModel, setSelectionModel] = React.useState([]);
           // selectionModel={selectionModel}

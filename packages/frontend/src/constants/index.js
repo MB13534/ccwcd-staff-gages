@@ -17,6 +17,12 @@ export const CRUD_MODELS = [
   },
 ];
 
+export const EDIT_CRUD_TABLES_DISABLED = [];
+
+export const DELETE_CRUD_TABLES_DISABLED = ["ListMeasurementStationsUp"];
+
+export const CREATE_NEW_CRUD_TABLES_DISABLED = ["ListMeasurementStationsUp"];
+
 export const CRUD_LOOKUP_TABLES = [];
 
 export const THEME = {

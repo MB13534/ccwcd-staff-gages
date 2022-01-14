@@ -19,9 +19,9 @@ import { useDev } from "../../DevProvider";
 const Root = styled(Grid)`
   height: calc(100% - 24px);
   padding-bottom: 49px;
-  ${(props) => props.theme.breakpoints.down("xs")} {
-    padding-bottom: 100px;
-  }
+  // ${(props) => props.theme.breakpoints.down("xs")} {
+  //   padding-bottom: 100px;
+  // }
 `;
 
 function Results({

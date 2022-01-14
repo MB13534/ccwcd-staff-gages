@@ -2,8 +2,10 @@ import { useApp } from "../../AppProvider";
 import { useHistory } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import {
+  DELETE_CRUD_TABLES_DISABLED,
   // CONTENT_NODE_STATUS_IDS,
   DIALOG_TYPES,
+  EDIT_CRUD_TABLES_DISABLED,
 } from "../../constants";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
@@ -134,6 +136,7 @@ export function ActionsDropdown({
       onClick: handleClick(onEditClick),
       icon: EditIcon,
       visibleForTypes: [ActionsDropdownTypes.INDEX],
+      disabled: EDIT_CRUD_TABLES_DISABLED.includes(modelName),
     },
     // duplicate: {
     //   label: "Duplicate",
@@ -175,6 +178,7 @@ export function ActionsDropdown({
       icon: DeleteIcon,
       visibleForTypes: [ActionsDropdownTypes.INDEX, ActionsDropdownTypes.VIEW],
       className: "error",
+      disabled: DELETE_CRUD_TABLES_DISABLED.includes(modelName),
     },
   });
 
