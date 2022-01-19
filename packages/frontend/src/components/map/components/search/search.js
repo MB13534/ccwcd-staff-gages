@@ -19,13 +19,16 @@ import { useAuth0 } from "@auth0/auth0-react";
 import styled from "styled-components/macro";
 
 const CustomSearch = styled(TextField)`
-  border-radius: 10px;
+  fieldset {
+    border-radius: 15px;
+  }
+  border-radius: 15px;
   background-color: rgba(255, 255, 255, 0.7);
   position: absolute;
   top: 10px;
   left: 50px;
   width: calc(100% - 100px);
-  z-index: 1299;
+  z-index: 1;
   &:hover {
     background-color: white;
   }
