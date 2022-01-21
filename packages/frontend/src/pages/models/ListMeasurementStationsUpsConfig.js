@@ -2,8 +2,8 @@ import React from "react";
 import { Renderers } from "../../components/crud/ResultsRenderers";
 import { CRUD_FIELD_TYPES } from "../../constants";
 
-import { Divider, Grid, Typography } from "@material-ui/core";
-import LatLongMarkerMap from "../../components/map/LatLongMarkerMap";
+import { Grid, Typography } from "@material-ui/core";
+import LatLongMap from "../../components/map/LatLongMap";
 
 export const displayName = (row) => {
   return `${row.map_display_name}`;
@@ -126,31 +126,63 @@ export const fields = [
     defaultValue: new Date(),
   },
   {
+    type: CRUD_FIELD_TYPES.SECTION_HEADER,
+    title: "Location",
+  },
+  {
     type: CRUD_FIELD_TYPES.CUSTOM,
     component: (config) => {
-      return config.data.map_lon_dd &&
-        config.data.map_lat_dd &&
-        config.data.map_lon_dd !== "" &&
-        config.data.map_lat_dd !== "" ? (
+      return config.data.map_lon_dd && config.data.map_lat_dd ? (
         <Grid item xs={12} style={{ paddingTop: "0" }}>
-          <LatLongMarkerMap config={config} />
+          <LatLongMap config={config} />
         </Grid>
       ) : (
         <Grid item xs={12}>
           <Typography align="center" variant={"h4"}>
-            **No coordinates available**
+            **This Well is Missing Coordinates**
           </Typography>
           <Typography
             variant={"subtitle2"}
             color={"textSecondary"}
             align="center"
           >
-            Map will not be displayed
+            -Assign coordinates, if available-
           </Typography>
-          <Divider mt={2} />
+
+          <Grid item xs={12} style={{ paddingTop: "0" }}>
+            <LatLongMap config={config} />
+          </Grid>
         </Grid>
       );
     },
+  },
+  {
+    name: "Latitude",
+    key: "map_lat_dd",
+    required: false,
+    type: CRUD_FIELD_TYPES.NUMBER,
+    typeConfig: {
+      decimalScale: 15,
+      min: -90,
+      max: 90,
+      disabled: true,
+    },
+    cols: 6,
+    isOpen: false,
+  },
+  {
+    name: "Longitude",
+    key: "map_lon_dd",
+    required: false,
+    type: CRUD_FIELD_TYPES.NUMBER,
+    typeConfig: {
+      decimalScale: 15,
+      min: -180,
+      max: 180,
+      disabled: true,
+    },
+    cols: 6,
+    isOpen: false,
   },
 ];
 

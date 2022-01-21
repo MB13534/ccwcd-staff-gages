@@ -115,6 +115,7 @@ function EditFormNumber({
       setFieldValue={setFieldValue}
     >
       <MuiTextField
+        disabled={field?.typeConfig?.disabled || false}
         name={field.key}
         value={values[field.key]}
         rows={5}

@@ -1,7 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
-import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import * as MapboxDrawGeodesic from "mapbox-gl-draw-geodesic";
 import { RulerControl } from "mapbox-gl-controls";
 import styled from "styled-components/macro";
 import { STARTING_LOCATION } from "../../constants";
@@ -9,11 +7,10 @@ import { Accordion, AccordionDetails, Typography } from "@material-ui/core";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import debounce from "lodash.debounce";
-import DragCircleControl from "./DragCircleControl";
-import { handleCopyCoords, updateArea } from "../../utils/map";
+import { handleCopyCoords } from "../../utils/map";
 import CoordinatesPopup from "./components/CoordinatesPopup";
-import MeasurementsPopup from "./components/MeasurementsPopup";
-import { isTouchScreenDevice } from "../../utils";
+import Button from "@material-ui/core/Button";
+import { Edit } from "@material-ui/icons";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 
@@ -44,21 +41,28 @@ const Instructions = styled.div`
   display: block;
 `;
 
+const EditButton = styled(Button)`
+  position: absolute;
+  text-align: center;
+  bottom: 0;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, 0);
+  z-index: 1000;
+`;
+
 const Map = ({ config }) => {
   const [map, setMap] = useState();
   const [mapIsLoaded, setMapIsLoaded] = useState(false);
+  const [isMarkerDraggable, setIsMarkerDraggable] = useState(false);
   const coordinatesContainerRef = useRef(null);
   const instructionsRef = useRef(null);
   const longRef = useRef(null);
   const latRef = useRef(null);
   const eleRef = useRef(null);
-  const polygonRef = useRef(null);
-  const radiusRef = useRef(null);
-  const pointRef = useRef(null);
-  const measurementsContainerRef = useRef(null);
   const mapContainerRef = useRef(null); // create a reference to the map container
 
-  async function getElevation(transferElevation = true) {
+  async function getElevation(transferElevation = false) {
     // Construct the API request.
     const query = await fetch(
       `https://api.mapbox.com/v4/mapbox.mapbox-terrain-v2/tilequery/${longRef.current.innerHTML},${latRef.current.innerHTML}.json?layers=contour&limit=50&access_token=${mapboxgl.accessToken}`,
@@ -83,59 +87,23 @@ const Map = ({ config }) => {
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/satellite-streets-v11",
       center:
-        config.data.longitude_dd === "" || config.data.latitude_dd === ""
+        config.data.map_lon_dd === "" ||
+        config.data.map_lat_dd === "" ||
+        !config.data.map_lon_dd ||
+        !config.data.map_lat_dd
           ? STARTING_LOCATION
-          : [config.data.longitude_dd, config.data.latitude_dd],
+          : [config.data.map_lon_dd, config.data.map_lat_dd],
       zoom:
-        config.data.longitude_dd === "" || config.data.latitude_dd === ""
+        config.data.map_lon_dd === "" ||
+        config.data.map_lat_dd === "" ||
+        !config.data.map_lon_dd ||
+        !config.data.map_lat_dd
           ? 9
           : 16,
     });
 
-    //adds control features as extended by MapboxDrawGeodesic (draw circle)
-    let modes = MapboxDraw.modes;
-    modes = MapboxDrawGeodesic.enable(modes);
-    const draw = new MapboxDraw({
-      modes,
-      controls: {
-        polygon: true,
-        point: true,
-        trash: true,
-      },
-      displayControlsDefault: false,
-      userProperties: true,
-    });
-
-    //event listener to run function updateArea during each draw action to handle measurements popup
-    const drawActions = ["draw.create", "draw.update", "draw.delete"];
-    drawActions.forEach((item) => {
-      map.on(item, (event) => {
-        const geojson = event.features[0];
-        const type = event.type;
-        updateArea(
-          geojson,
-          type,
-          polygonRef,
-          radiusRef,
-          pointRef,
-          measurementsContainerRef,
-          draw
-        );
-      });
-    });
-
-    //top left controls
-    //none
-
     //top right controls
     map.addControl(new mapboxgl.FullscreenControl(), "top-right");
-
-    //bottom right controls
-    //draw controls do not work correctly on touch screens
-    !isTouchScreenDevice() &&
-      map.addControl(draw, "bottom-right") &&
-      !isTouchScreenDevice() &&
-      map.addControl(new DragCircleControl(draw), "bottom-right");
 
     //bottom left controls
     map.addControl(
@@ -147,7 +115,7 @@ const Map = ({ config }) => {
         units: "feet",
         labelFormat: (n) => `${n.toFixed(2)} ft`,
       }),
-      "bottom-right"
+      "bottom-left"
     );
 
     map.on("load", () => {
@@ -170,48 +138,44 @@ const Map = ({ config }) => {
   useEffect(() => {
     if (mapIsLoaded && typeof map != "undefined") {
       const marker = new mapboxgl.Marker({
-        draggable: true,
+        draggable: isMarkerDraggable,
       })
         .setLngLat(
-          config.data.longitude_dd === "" || config.data.latitude_dd === ""
+          config.data.map_lon_dd === "" ||
+            config.data.map_lat_dd === "" ||
+            !config.data.map_lon_dd ||
+            !config.data.map_lat_dd
             ? STARTING_LOCATION
-            : [config.data.longitude_dd, config.data.latitude_dd]
+            : [config.data.map_lon_dd, config.data.map_lat_dd]
         )
         .addTo(map);
 
-      if (config.data.longitude_dd && config.data.latitude_dd) {
+      if (config.data.map_lon_dd && config.data.map_lat_dd) {
         const lngLat = marker.getLngLat();
         coordinatesContainerRef.current.style.display = "block";
         instructionsRef.current.innerHTML =
-          "Drag and place marker to update coordinates and elevation fields";
+          "Drag and place marker to update coordinates";
         longRef.current.innerHTML = lngLat.lng;
         latRef.current.innerHTML = lngLat.lat;
-        getElevation(!config.data.elevation_ftabmsl);
+        getElevation();
       }
 
-      const onDragEnd = (marker) => {
+      function onDragEnd(marker) {
         const lngLat = marker.getLngLat();
         coordinatesContainerRef.current.style.display = "block";
         instructionsRef.current.innerHTML =
           "Click coordinate or elevation to copy individual result to clipboard";
         longRef.current.innerHTML = lngLat.lng;
-        config.setFieldValue("longitude_dd", lngLat.lng);
         latRef.current.innerHTML = lngLat.lat;
-        config.setFieldValue("latitude_dd", lngLat.lat);
+        config.setFieldValue("map_lat_dd", lngLat.lat);
+        config.setFieldValue("map_lon_dd", lngLat.lng);
         getElevation();
-      };
+      }
 
       marker.on("dragend", () => onDragEnd(marker));
 
       // //handles copying coordinates and measurements to the clipboard
-      const copyableRefs = [
-        longRef,
-        latRef,
-        eleRef,
-        polygonRef,
-        radiusRef,
-        pointRef,
-      ];
+      const copyableRefs = [longRef, latRef, eleRef];
       copyableRefs.forEach((ref) => {
         ref.current.addEventListener("click", (e) =>
           handleCopyCoords(e.target.textContent)
@@ -230,7 +194,7 @@ const Map = ({ config }) => {
           style={{ padding: "0" }}
         >
           <Typography variant="h4" ml={2}>
-            Map (Coordinates & Elevation Selector)
+            Map (Coordinates Selector)
           </Typography>
         </AccordionSummary>
         <AccordionDetails style={{ padding: "0" }}>
@@ -245,16 +209,24 @@ const Map = ({ config }) => {
                 top={"49px"}
                 left={"10px"}
               />
-              <MeasurementsPopup
-                measurementsContainerRef={measurementsContainerRef}
-                radiusRef={radiusRef}
-                polygonRef={polygonRef}
-                pointRef={pointRef}
-              />
               <Instructions ref={instructionsRef}>
-                Drag and place marker to generate coordinates and elevation
-                fields
+                Enable marker to drag and place to edit coordinates
               </Instructions>
+              <EditButton
+                size="small"
+                id="dragToggle"
+                onClick={() => {
+                  map._markers[0].setDraggable(!isMarkerDraggable);
+                  setIsMarkerDraggable((state) => !state);
+                }}
+                variant="contained"
+                color={!isMarkerDraggable ? "secondary" : "primary"}
+                startIcon={<Edit />}
+              >
+                {!isMarkerDraggable
+                  ? "Enable Marker Drag"
+                  : "Disable Marker Drag"}
+              </EditButton>
             </MapContainer>
           </Container>
         </AccordionDetails>
