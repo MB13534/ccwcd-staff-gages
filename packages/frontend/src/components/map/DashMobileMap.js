@@ -5,6 +5,8 @@ import styled from "styled-components/macro";
 import _ from "lodash";
 
 import MapboxglSpiderifier from "mapboxgl-spiderifier";
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 import { STARTING_LOCATION } from "../../constants";
 import ResetZoomControl from "../../components/map/ResetZoomControl";
@@ -224,6 +226,53 @@ function MobileMap({ map, setMap, data, isLoading, error }) {
     latRef.current.innerHTML = e.features[0].properties["map_lat_dd"];
   }
 
+  const coordinatesGeocoder = function (query) {
+    // Match anything which looks like
+    // decimal degrees coordinate pair.
+    const matches = query.match(
+      /^[ ]*(?:Lat: )?(-?\d+\.?\d*)[, ]+(?:Lng: )?(-?\d+\.?\d*)[ ]*$/i
+    );
+    if (!matches) {
+      return null;
+    }
+
+    function coordinateFeature(lng, lat) {
+      return {
+        center: [lng, lat],
+        geometry: {
+          type: "Point",
+          coordinates: [lng, lat],
+        },
+        place_name: "Lat: " + lat + " Lng: " + lng,
+        place_type: ["coordinate"],
+        properties: {},
+        type: "Feature",
+      };
+    }
+
+    const coord1 = Number(matches[1]);
+    const coord2 = Number(matches[2]);
+    const geocodes = [];
+
+    if (coord1 >= -90 && coord1 <= 90 && coord2 >= -180 && coord2 <= 180) {
+      // must be lat, lng
+      geocodes.push(coordinateFeature(coord2, coord1));
+    }
+
+    if (coord2 >= -90 && coord2 <= 90 && coord1 >= -180 && coord1 <= 180) {
+      // must be lng, lat
+      geocodes.push(coordinateFeature(coord1, coord2));
+    }
+
+    // if (geocodes.length === 0) {
+    //   // else could be either lng, lat or lat, lng
+    //   geocodes.push(coordinateFeature(coord1, coord2));
+    //   // geocodes.push(coordinateFeature(coord2, coord1));
+    // }
+
+    return geocodes;
+  };
+
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: "map",
@@ -255,6 +304,18 @@ function MobileMap({ map, setMap, data, isLoading, error }) {
     );
     // Add locate control to the map.
     map.addControl(new ResetZoomControl(), "top-right");
+
+    //bottom right controls
+    map.addControl(
+      new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        localGeocoder: coordinatesGeocoder,
+        zoom: 16,
+        mapboxgl: mapboxgl,
+        reverseGeocode: true,
+      }),
+      "bottom-right"
+    );
 
     //bottom left controls
     map.addControl(
