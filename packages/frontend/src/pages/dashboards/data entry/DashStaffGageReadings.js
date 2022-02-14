@@ -11,7 +11,7 @@ import useService from "../../../hooks/useService";
 import DataAdminTable from "../../../components/DataAdminTable";
 import Loader from "../../../components/Loader";
 import Panel from "../../../components/panels/Panel";
-import { dateFormatter, threeMonthsAgo } from "../../../utils";
+import { dateFormatter } from "../../../utils";
 import DatePicker from "../../../components/pickers/DatePicker";
 import { add } from "date-fns";
 
@@ -30,7 +30,7 @@ function StaffGageReadings({ actions = [] }) {
   //date filter defaults
   const defaultFilterValues = {
     // startDate: lastOfJanuary,
-    startDate: threeMonthsAgo,
+    startDate: null,
     endDate: new Date(),
   };
   const [filterValues, setFilterValues] = useState(defaultFilterValues);

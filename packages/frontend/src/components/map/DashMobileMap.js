@@ -313,6 +313,7 @@ function MobileMap({ map, setMap, data, isLoading, error }) {
         zoom: 16,
         mapboxgl: mapboxgl,
         reverseGeocode: true,
+        placeholder: "Geocoder Search",
       }),
       "bottom-right"
     );

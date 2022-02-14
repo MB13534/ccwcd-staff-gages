@@ -123,6 +123,13 @@ const overrides = {
       },
     },
   },
+  MuiInputBase: {
+    root: {
+      "& .Mui-disabled": {
+        color: "rgba(0,0,0,.75)",
+      },
+    },
+  },
 };
 
 export default overrides;

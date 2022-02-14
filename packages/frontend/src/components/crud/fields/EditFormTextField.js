@@ -5,6 +5,7 @@ import {
   withWidth,
   isWidthDown,
   FormHelperText,
+  Tooltip,
 } from "@material-ui/core";
 import { CRUD_FIELD_TYPES } from "../../../constants";
 import { EditFormFieldWrap } from "../EditFormFieldWrap";
@@ -57,6 +58,7 @@ function EditFormTextField({
   handleChange,
   variant,
   width,
+  disabled,
 }) {
   const theme = useTheme();
 
@@ -87,27 +89,32 @@ function EditFormTextField({
       isFieldDirty={isFieldDirty}
       setFieldValue={setFieldValue}
     >
-      <MuiTextField
-        name={field.key}
-        value={values[field.key] ?? ""}
-        multiline={isMultiline}
-        rows={5}
-        error={hasError}
-        fullWidth
-        inputProps={{ tabIndex: index + 1 }}
-        onBlur={handleBlur}
-        onChange={handleChange}
-        className={
-          valueCache &&
-          currentVersion &&
-          newValue[field.key] !== oldValue[field.key]
-            ? "mismatch"
-            : "match"
-        }
-        variant={variant}
-        my={2}
-        disabled={field?.typeConfig?.disabled || false}
-      />
+      <Tooltip
+        title={disabled ? "This field cannot be edited." : ""}
+        placement="bottom-start"
+      >
+        <MuiTextField
+          name={field.key}
+          value={values[field.key] ?? ""}
+          multiline={isMultiline}
+          rows={5}
+          error={hasError}
+          fullWidth
+          inputProps={{ tabIndex: index + 1 }}
+          onBlur={handleBlur}
+          onChange={handleChange}
+          className={
+            valueCache &&
+            currentVersion &&
+            newValue[field.key] !== oldValue[field.key]
+              ? "mismatch"
+              : "match"
+          }
+          variant={variant}
+          my={2}
+          disabled={disabled}
+        />
+      </Tooltip>
 
       {touched[field.key] && (
         <FormHelperText error>{errors[field.key]}</FormHelperText>

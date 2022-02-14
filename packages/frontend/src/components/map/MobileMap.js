@@ -332,9 +332,6 @@ function MobileMap() {
       }),
       "top-right"
     );
-    // Add locate control to the map.
-    map.addControl(new ResetZoomControl(), "top-right");
-
     //bottom right controls
     map.addControl(
       new MapboxGeocoder({
@@ -343,9 +340,11 @@ function MobileMap() {
         zoom: 16,
         mapboxgl: mapboxgl,
         reverseGeocode: true,
+        placeholder: "Geocoder Search",
       }),
       "bottom-right"
     );
+    map.addControl(new ResetZoomControl(), "top-right");
 
     //bottom left controls
     map.addControl(

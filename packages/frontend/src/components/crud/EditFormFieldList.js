@@ -97,7 +97,6 @@ export function EditFormFieldList({
     if (!FieldComponent) {
       return "Unknown Field Type";
     }
-
     return (
       <FieldComponent
         key={field.key}
@@ -117,6 +116,7 @@ export function EditFormFieldList({
         handleBlur={handleBlur}
         handleChange={handleChange}
         variant={defaultVariant}
+        disabled={field?.typeConfig?.disabled || false}
       />
     );
   });
