@@ -84,15 +84,22 @@ function EditFormDateTime({
     : MuiDateTimePicker;
   useEffect(() => {
     if (
-      field.defaultValue !== null &&
-      typeof field.defaultValue !== "undefined" &&
-      (data[field.key] === null ||
-        typeof data[field.key] === "undefined" ||
-        data[field.key] === "")
+      (field.defaultValue !== null &&
+        typeof field.defaultValue !== "undefined" &&
+        (data[field.key] === null ||
+          typeof data[field.key] === "undefined" ||
+          data[field.key] === "")) ||
+      field.defaultOverrideValue
     ) {
       setFieldValue(field.key, field.defaultValue);
     }
-  }, [field.defaultValue, setFieldValue, field.key, data]);
+  }, [
+    field.defaultValue,
+    setFieldValue,
+    field.key,
+    field.defaultOverrideValue,
+    data,
+  ]);
 
   return (
     <EditFormFieldWrap

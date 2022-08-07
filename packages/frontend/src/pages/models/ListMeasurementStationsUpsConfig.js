@@ -73,6 +73,7 @@ export const fields = [
     cols: 12,
     isOpen: true,
     defaultValue: new Date(),
+    defaultOverrideValue: true,
   },
   {
     name: "Staff Gage Reading",
