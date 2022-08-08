@@ -83,23 +83,21 @@ function EditFormDateTime({
     ? MuiKeyboardDateTimePicker
     : MuiDateTimePicker;
   useEffect(() => {
+    let defaultValue = field.defaultValue;
     if (
-      (field.defaultValue !== null &&
-        typeof field.defaultValue !== "undefined" &&
+      (defaultValue !== null &&
+        typeof defaultValue !== "undefined" &&
         (data[field.key] === null ||
           typeof data[field.key] === "undefined" ||
           data[field.key] === "")) ||
       field.defaultOverrideValue
     ) {
-      setFieldValue(field.key, field.defaultValue);
+      if (defaultValue === "currentDate") {
+        defaultValue = new Date();
+      }
+      setFieldValue(field.key, defaultValue);
     }
-  }, [
-    field.defaultValue,
-    setFieldValue,
-    field.key,
-    field.defaultOverrideValue,
-    data,
-  ]);
+  }, [setFieldValue, field, data]);
 
   return (
     <EditFormFieldWrap

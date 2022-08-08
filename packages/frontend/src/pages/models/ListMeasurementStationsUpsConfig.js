@@ -72,7 +72,7 @@ export const fields = [
     type: CRUD_FIELD_TYPES.DATETIME,
     cols: 12,
     isOpen: true,
-    defaultValue: new Date(),
+    defaultValue: "currentDate",
     defaultOverrideValue: true,
   },
   {
