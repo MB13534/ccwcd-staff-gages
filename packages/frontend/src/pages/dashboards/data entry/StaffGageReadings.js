@@ -85,7 +85,10 @@ function StaffGageReadings({ actions = [] }) {
         console.error(err);
       }
     },
-    { keepPreviousData: true }
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   useEffect(() => {
@@ -102,7 +105,10 @@ function StaffGageReadings({ actions = [] }) {
         console.error(err);
       }
     },
-    { keepPreviousData: true }
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const formattedStations = useMemo(() => {

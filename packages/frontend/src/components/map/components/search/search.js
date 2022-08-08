@@ -97,29 +97,36 @@ const SearchResults = ({
 const Search = ({ onSelect }) => {
   const searchRef = useRef(null);
   const { getAccessTokenSilently } = useAuth0();
-  const { data: options } = useQuery(["Search Options"], async () => {
-    try {
-      const token = await getAccessTokenSilently();
+  const { data: options } = useQuery(
+    ["Search Options"],
+    async () => {
+      try {
+        const token = await getAccessTokenSilently();
 
-      // Create request headers with token authorization
-      const headers = { Authorization: `Bearer ${token}` };
-      const { data: response } = await axios.get(
-        `${process.env.REACT_APP_ENDPOINT}/api/list-measurement-stations-ups`,
-        { headers }
-      );
-      const filterData = response.filter(
-        (location) =>
-          location.applies_to.includes("staffgages") &&
-          !location.removed &&
-          !location.inactive &&
-          location.map_lon_dd &&
-          location.map_lon_dd
-      );
-      return filterData;
-    } catch (err) {
-      console.error(err);
+        // Create request headers with token authorization
+        const headers = { Authorization: `Bearer ${token}` };
+        const { data: response } = await axios.get(
+          `${process.env.REACT_APP_ENDPOINT}/api/list-measurement-stations-ups`,
+          { headers }
+        );
+        const filterData = response.filter(
+          (location) =>
+            location.applies_to.includes("staffgages") &&
+            !location.removed &&
+            !location.inactive &&
+            location.map_lon_dd &&
+            location.map_lon_dd
+        );
+        return filterData;
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
     }
-  });
+  );
   const [value, setValue] = useState("");
   const debouncedSearchValue = useDebounce(value, 200);
   const [searchResults, setSearchResults] = useState([]);

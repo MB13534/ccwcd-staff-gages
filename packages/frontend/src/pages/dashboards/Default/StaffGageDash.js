@@ -69,7 +69,10 @@ const StaffGageDash = () => {
         console.error(err);
       }
     },
-    { keepPreviousData: true }
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const formattedCoords = useMemo(() => {

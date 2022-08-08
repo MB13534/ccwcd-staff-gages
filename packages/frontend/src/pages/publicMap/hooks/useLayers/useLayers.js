@@ -6,15 +6,22 @@ import axios from "axios";
 const useLayers = () => {
   const [layers, setLayers] = useState([]);
 
-  const { data, isError, isLoading } = useQuery(["Layers"], async () => {
-    try {
-      return await axios.get(
-        `${process.env.REACT_APP_ENDPOINT}/api/public-map/layers`
-      );
-    } catch (err) {
-      console.error(err);
+  const { data, isError, isLoading } = useQuery(
+    ["Layers"],
+    async () => {
+      try {
+        return await axios.get(
+          `${process.env.REACT_APP_ENDPOINT}/api/public-map/layers`
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    {
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
     }
-  });
+  );
 
   useEffect(() => {
     setLayers(data?.data || []);
